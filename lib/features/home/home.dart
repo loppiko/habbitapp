@@ -12,6 +12,9 @@ class HomeScreen extends StatelessWidget {
       'My task is to do anything',
       'Not to play on computer',
       'Not to use mobile phone',
+      'Not to use mobile phone',
+      'Not to use mobile phone',
+      'Not to use mobile phone',
     ];
 
     return Scaffold(
@@ -37,11 +40,12 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 const Text(
                   'Lista zadań:',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(
+                      0xE6FFFFFF)),
                 ),
                 const SizedBox(height: 16),
                 ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
+                  constraints: const BoxConstraints(maxWidth: 450),
                   child: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(), // Zapobiega konfliktom z SingleChildScrollView
@@ -93,21 +97,45 @@ class TaskItem extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20), // Zaokrąglenie krawędzi
-        side: const BorderSide(color: Color(0xFF8A4DB3), width: 2), // Fioletowa obwódka
+        side: const BorderSide(color: Color(0xFF8A4DB3), width: 4), // Fioletowa obwódka
       ),
       child: Row(
         children: [
-          // Lewa część - osobno klikalna
+          // Lewa część - koło i prostokąt w Stack
           GestureDetector(
             onTap: onLeftTap,
             child: Container(
-              width: 30,
-              height: 30,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFF89D), // Żółte tło
-                shape: BoxShape.circle, // Kształt koła
+              width: 60, // Szerokość lewej części
+              height: 80,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Prostokąt pod kołem
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      width: 60,
+                      height: 80, // Wysokość prostokąta
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF6FCB4), // Żółty kolor
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          topLeft: Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Koło na górze
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE1E740), // Żółte tło koła
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ],
               ),
-              margin: const EdgeInsets.all(8),
             ),
           ),
           // Prawa część
@@ -115,7 +143,7 @@ class TaskItem extends StatelessWidget {
             child: GestureDetector(
               onTap: onRightTap,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                 child: Row(
                   children: [
                     // Tytuł zadania
@@ -129,12 +157,12 @@ class TaskItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Numer i ikonka po prawej stronie
+                    // Numer i ikona
                     Row(
                       children: const [
                         CircleAvatar(
                           radius: 12,
-                          backgroundColor: Color(0xFFFFF89D), // Żółte tło
+                          backgroundColor: Color(0xFFFFF89D),
                           child: Text(
                             '5',
                             style: TextStyle(fontSize: 12, color: Colors.black),
@@ -166,6 +194,10 @@ class TaskListScreen extends StatelessWidget {
       'My task is to do something',
       'My task is to do anything',
       'Not to play on computer',
+      'Not to use mobile phone',
+      'Not to use mobile phone',
+      'Not to use mobile phone',
+      'Not to use mobile phone',
       'Not to use mobile phone',
     ];
 
@@ -227,7 +259,7 @@ class ChartWithLabel extends StatelessWidget {
                   PieChartData(
                     sections: [
                       PieChartSectionData(
-                        color: Colors.blue,
+                        color: Color(0xFFFCBA04),
                         value: value,
                         radius: 15,
                         showTitle: false,
@@ -243,10 +275,11 @@ class ChartWithLabel extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${value.toInt()}%', // Liczba w środku wykresu
+                  '${value.toInt()}', // Liczba w środku wykresu
                   style: const TextStyle(
+
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.bold, color: Color(0xE6FFFFFF)
                   ),
                 ),
               ],
@@ -259,7 +292,7 @@ class ChartWithLabel extends StatelessWidget {
               label,
               textAlign: TextAlign.center, // Wyśrodkowanie tekstu
               softWrap: true, // Włączenie zawijania
-              style: const TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14, color: Color(0xE6FFFFFF)),
             ),
           ),
         ],
