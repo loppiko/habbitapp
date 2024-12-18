@@ -24,7 +24,7 @@ class DailyRepository {
           append(Daily.createFromJsonResponse(jsonDaily));
         }
       } else {
-        print("Unexpected response");
+        print("Unexpected response $response.");
       }
 
     } catch (e) {

@@ -1,54 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:habbitapp/shared/tasks/todos/todo.dart';
+import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
+import 'package:provider/provider.dart';
+
 
 class CalendarScreen extends StatelessWidget {
-  const CalendarScreen({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, // Gradientowe tło z ciemnym fioletem
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Przezroczysty AppBar
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        children: const [
-          DaySection(day: 'Tommorow', tasks: [
-            TaskCard(
-              title: 'Name of a task',
-              description:
-              'This is my short description of task and it would be fun if it is shortened',
-              leftColor: Colors.red,
-              currentProgress: 3,
-              totalProgress: 5,
-            ),
-          ]),
-          DaySection(day: 'Thursday', tasks: [
-            TaskCard(
-              title: 'Name of a task',
-              description:
-              'This is my short description of task and it would be fun if it is shortened',
-              leftColor: Colors.yellow,
-              currentProgress: 1,
-              totalProgress: 3,
-            ),
-          ]),
-          DaySection(day: 'Friday', tasks: [
-            TaskCard(
-              title: 'Name of a task',
-              description:
-              'This is my short description of task and it would be fun if it is shortened',
-              leftColor: Colors.green,
-              currentProgress: 1,
-              totalProgress: 4,
-            ),
-          ]),
-        ],
+      body: Consumer<TodosRepository>(
+        builder: (context, repository, child) {
+          final todos = repository.todos; // Dostęp do danych repozytorium
+
+          return ListView.builder(
+            itemCount: todos.length,
+            itemBuilder: (context, index) {
+              final todo = todos[index];
+              return ListTile(
+                title: Text(todo.text),
+                subtitle: Text(todo.notes),
+              );
+            },
+          );
+        },
       ),
     );
   }
+
+
+  Map<String, List<Todo>> _groupTodosByDay(List<Todo> todos) {
+    final Map<String, List<Todo>> todosByDay = {};
+
+    for (final todo in todos) {
+      final dueDate = todo.date ?? todo.creationDate;
+      if (dueDate == null) continue;
+
+      final dayKey = "${dueDate.year}-${dueDate.month}-${dueDate.day}";
+
+      if (!todosByDay.containsKey(dayKey)) {
+        todosByDay[dayKey] = [];
+      }
+      todosByDay[dayKey]!.add(todo);
+    }
+
+    return todosByDay;
+  }
 }
+
 
 class DaySection extends StatelessWidget {
   final String day;
@@ -89,6 +92,8 @@ class DaySection extends StatelessWidget {
     );
   }
 }
+
+
 
 class TaskCard extends StatelessWidget {
   final String title;
@@ -187,3 +192,4 @@ class TaskCard extends StatelessWidget {
     );
   }
 }
+

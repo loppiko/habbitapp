@@ -1,46 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:habbitapp/features/login/login.dart';
+import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
+import 'package:provider/provider.dart';
 import 'features/home/home.dart';
 import 'features/calendar/calendar.dart';
 import 'features/profile/profile.dart';
-import 'features/login/login.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    // Wrapping the app with ChangeNotifierProvider
+    ChangeNotifierProvider(
+      create: (_) => TodosRepository(),  // Tworzymy instancję TodosRepository
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
 
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.transparent, // Przezroczyste tło dla Scaffold
+        scaffoldBackgroundColor: Colors.transparent,
       ),
-      // Użycie LoginScreen() jako ekranu początkowego
-      home: LoginScreen(),
+        home: LoginScreen(), // Główny ekran aplikacji
     );
   }
 }
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
 
-  // Lista ekranów
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Pobieranie danych przy inicjalizacji ekranu
+    Future.delayed(Duration.zero, () {
+      Provider.of<TodosRepository>(context, listen: false)
+          .downloadHabiticaTodos(); // Wywołujemy pobieranie danych
+    });
+  }
+
+  int _selectedIndex = 0;
   final List<Widget> _pages = [
-    const CalendarScreen(),
+    CalendarScreen(),
     const HomeScreen(),
     const ProfileScreen(),
   ];
 
-  // Obsługa zmiany indeksu
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -49,31 +66,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientBackground( // Dodanie gradientu na całość ekranu
-      child: Scaffold(
-        backgroundColor: Colors.transparent, // Przezroczyste tło
-        body: _pages[_selectedIndex], // Wyświetlenie aktywnego ekranu
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          currentIndex: _selectedIndex, // Indeks aktywnego elementu
-          onTap: _onItemTapped, // Obsługa kliknięcia
-          selectedItemColor: Colors.white, // Kolor zaznaczenia
-          unselectedItemColor: const Color(0xFFBBA6FF), // Kolor nieaktywnego elementu
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month),
-              label: 'Calendar',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Profile',
-            ),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: _pages[_selectedIndex], // Wyświetlenie aktualnego ekranu
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Calendar'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Profile'),
+        ],
       ),
     );
   }

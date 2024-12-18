@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:habbitapp/main.dart';
 import 'package:habbitapp/shared/api/api_service.dart';
+import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -19,10 +20,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final response = await ApiService.login(username, password);
 
+
     if (response.containsKey('token')) {
+      final repository = TodosRepository();
+      repository.downloadHabiticaTodos();
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     } else {
       setState(() {

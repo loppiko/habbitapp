@@ -1,33 +1,30 @@
+import 'package:flutter/foundation.dart';
 import 'package:habbitapp/shared/api/api_service.dart';
+import 'package:habbitapp/shared/tasks/todos/todo.dart';
 
-import 'todo.dart';
+class TodosRepository extends ChangeNotifier {
+  List<Todo> _todos = [];
 
-class TodosRepository {
-  final List<Todo> _todos = [];
+  List<Todo> get todos => List.unmodifiable(_todos);
 
 
-  void append(Todo daily) {
-    _todos.add(daily);
+  void append(Todo todo) {
+    _todos.add(todo);
+    notifyListeners();
   }
 
 
-  List<Todo> getAll() {
-    return List.unmodifiable(_todos);
-  }
-
-
-  void downloadHabiticaTodos() async {
+  Future<void> downloadHabiticaTodos() async {
     try {
       Map<String, dynamic> response = await ApiService.getTasks(type: "todos");
 
       if (response.containsKey("data")) {
-        for (Map<String, dynamic> jsonDaily in response["data"]) {
-          append(Todo.createFromJsonResponse(jsonDaily));
+        for (Map<String, dynamic> jsonTodo in response["data"]) {
+          append(Todo.createFromJsonResponse(jsonTodo));
         }
       } else {
-        print("Unexpected response");
+        print("Unexpected response $response");
       }
-
     } catch (e) {
       print(e);
     }
