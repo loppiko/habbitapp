@@ -3,22 +3,22 @@ import 'package:habbitapp/shared/api/api_service.dart';
 import 'todo.dart';
 
 class TodosRepository {
-  final List<Todo> _dailys = [];
+  final List<Todo> _todos = [];
 
 
   void append(Todo daily) {
-    _dailys.add(daily);
+    _todos.add(daily);
   }
 
 
   List<Todo> getAll() {
-    return List.unmodifiable(_dailys);
+    return List.unmodifiable(_todos);
   }
 
 
   void downloadHabiticaTodos() async {
     try {
-      Map<String, dynamic> response = await ApiService.getTasks(type: "dailys");
+      Map<String, dynamic> response = await ApiService.getTasks(type: "todos");
 
       if (response.containsKey("data")) {
         for (Map<String, dynamic> jsonDaily in response["data"]) {
