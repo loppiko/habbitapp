@@ -71,26 +71,4 @@ class HabiticaColors {
   static const Color green100 = Color(0xFF24CC8F);
   static const Color green500 = Color(0xFF77F4A0);
 
-  // Calculate colors
-  static List<Color> calculateColors(DateTime createdAt, DateTime dueDate) {
-    final totalDuration = dueDate.difference(createdAt).inMilliseconds.toDouble();
-    final elapsedDuration = DateTime.now().difference(createdAt).inMilliseconds.toDouble();
-
-    final progress = (elapsedDuration / totalDuration) * 100;
-
-    if (progress < 20) {
-      return [blue10, blue100];
-    } else if (progress >= 20 && progress < 40) {
-      return [green10, green100];
-    } else if (progress >= 40 && progress < 60) {
-      return [yellow10, yellow100];
-    } else if (progress >= 60 && progress < 80) {
-      return [orange10, orange100];
-    } else if (progress >= 80 && progress < 100) {
-      return [red10, red100];
-    } else {
-      return [maroon10, maroon100];
-    }
-  }
-
 }
