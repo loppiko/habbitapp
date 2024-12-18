@@ -30,6 +30,7 @@ class Todo {
     }
   }
 
+
   String get id => _id;
   String get text => _text;
   String get notes => _notes;

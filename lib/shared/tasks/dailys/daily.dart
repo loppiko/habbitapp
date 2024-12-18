@@ -38,6 +38,19 @@ class Daily {
   }
 
 
+  String get id => _id;
+  String get text => _text;
+  String get frequency => _frequency;
+  int get everyX => _everyX;
+  int get streak => _streak;
+  DateTime get startDate => _startDate;
+  bool get isDue => _isDue;
+  Map<String, bool> get repeat => Map.unmodifiable(_repeat);
+  List<DateTime> get nextDue => List.unmodifiable(_nextDue);
+  Color get taskColor => _taskColor;
+  Color get circleColor => _circleColor;
+
+
   static List<Color> calculateColors(int streak) {
     if (streak >= 12) {
       return [HabiticaColors.blue10, HabiticaColors.blue100];
