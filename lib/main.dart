@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'features/home/home.dart';
 import 'features/calendar/calendar.dart';
 import 'features/profile/profile.dart';
+import 'features/login/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.transparent, // Przezroczyste tło dla Scaffold
       ),
-      home: const HomePage(), // Ustawienie HomePage jako głównego widoku
+      // Użycie LoginScreen() jako ekranu początkowego
+      home: LoginScreen(),
     );
   }
 }
@@ -56,7 +58,7 @@ class _HomePageState extends State<HomePage> {
           currentIndex: _selectedIndex, // Indeks aktywnego elementu
           onTap: _onItemTapped, // Obsługa kliknięcia
           selectedItemColor: Colors.white, // Kolor zaznaczenia
-          unselectedItemColor: Color(0xFFBBA6FF), // Kolor nieaktywnego elementu
+          unselectedItemColor: const Color(0xFFBBA6FF), // Kolor nieaktywnego elementu
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.calendar_month),
