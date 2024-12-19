@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
+import 'package:habbitapp/shared/tasks/sub_tasks/sub_tasks.dart';
 
 class Todo {
   final String _id;
@@ -7,23 +8,20 @@ class Todo {
   String _notes;
   bool _completed;
   int _priority;
+  Map<String, SubTask> _checklist;
   DateTime? _creationDate;
   DateTime? _date;
   Color _taskColor = HabiticaColors.red10;
   Color _circleColor = HabiticaColors.red100;
 
-  Todo(
-      this._id, {
-        String text = "",
-        String notes = "",
-        bool completed = false,
-        int priority = 1,
-        DateTime? creationDate,
-        DateTime? date,
-      })  : _text = text,
+
+  Todo(this._id, { String text = "", String notes = "", bool completed = false, int priority = 1,
+        Map<String, SubTask>? checklist, DateTime? creationDate, DateTime? date,})
+      : _text = text,
         _notes = notes,
         _completed = completed,
         _priority = priority,
+        _checklist = checklist ?? <String, SubTask> {},
         _creationDate = creationDate ?? DateTime.now(),
         _date = date {
     if (creationDate != null && date != null) {
@@ -39,6 +37,7 @@ class Todo {
   String get notes => _notes;
   bool get completed => _completed;
   int get priority => _priority;
+  Map<String, SubTask> get checklist => Map.unmodifiable(_checklist);
   Color get taskColor => _taskColor;
   Color get circleColor => _circleColor;
   DateTime? get creationDate => _creationDate;
@@ -66,6 +65,7 @@ class Todo {
     }
   }
 
+
   static Todo createFromJsonResponse(Map<String, dynamic> input) {
     return Todo(
         input['_id'],
@@ -76,5 +76,28 @@ class Todo {
         creationDate: input.containsKey('createdAt') ? DateTime.parse(input['createdAt']) : null,
         date: input.containsKey('date') ? DateTime.parse(input['date']) : null
     );
+  }
+
+
+  int getTotalNumberOfChecklistSubTasks() {
+    return _checklist.length;
+  }
+
+
+  int getDoneNumberOfChecklistSubTasks() {
+    return _checklist.values.where((task) => task.completed).length;
+  }
+
+
+  SubTask getSubTaskById(String id) {
+    if (!_checklist.containsKey(id)) {
+      throw ArgumentError('Key "$id" not found in the checklist.');
+    }
+    return _checklist[id]!;
+  }
+
+
+  bool subTaskInChecklist(String id) {
+    return _checklist.containsKey(id);
   }
 }

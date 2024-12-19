@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
+import 'package:habbitapp/shared/tasks/sub_tasks/sub_tasks.dart';
 
 class Daily {
   final String _id;
@@ -8,22 +9,13 @@ class Daily {
   DateTime _startDate;
   bool _isDue;
   Map<String, bool> _repeat;
+  Map<String, SubTask> _checklist;
   List<DateTime> _nextDue;
   Color _taskColor = HabiticaColors.red10;
   Color _circleColor = HabiticaColors.red100;
 
 
-  Daily(
-      this._id, {
-        String text = "",
-        String frequency = "",
-        int everyX = 1,
-        DateTime? startDate,
-        int streak = 0,
-        int priority = 1,
-        bool isDue = false,
-        Map<String, bool>? repeat,
-        List<DateTime>? nextDue,
+  Daily(this._id, {String text = "", String frequency = "", int everyX = 1, DateTime? startDate, int streak = 0, int priority = 1, bool isDue = false, Map<String, bool>? repeat, Map<String, SubTask>? checklist, List<DateTime>? nextDue,
       })  : _text = text,
         _frequency = frequency,
         _everyX = everyX,
@@ -32,6 +24,7 @@ class Daily {
         _streak = streak,
         _isDue = isDue,
         _repeat = repeat ?? <String, bool>{},
+        _checklist = checklist ?? <String, SubTask> {},
         _nextDue = nextDue ?? [] {
 
       List<Color> colors = calculateColors(streak);
@@ -49,6 +42,7 @@ class Daily {
   DateTime get startDate => _startDate;
   bool get isDue => _isDue;
   Map<String, bool> get repeat => Map.unmodifiable(_repeat);
+  Map<String, SubTask> get checklist => Map.unmodifiable(_checklist);
   List<DateTime> get nextDue => List.unmodifiable(_nextDue);
   Color get taskColor => _taskColor;
   Color get circleColor => _circleColor;
@@ -86,5 +80,28 @@ class Daily {
           ?.map((date) => DateTime.parse(date as String))
           .toList()
     );
+  }
+
+
+  int getTotalNumberOfChecklistSubTasks() {
+    return _checklist.length;
+  }
+
+
+  int getDoneNumberOfChecklistSubTasks() {
+    return _checklist.values.where((task) => task.completed).length;
+  }
+
+
+  SubTask getSubTaskById(String id) {
+    if (!_checklist.containsKey(id)) {
+      throw ArgumentError('Key "$id" not found in the checklist.');
+    }
+    return _checklist[id]!;
+  }
+
+
+  bool subTaskInChecklist(String id) {
+    return _checklist.containsKey(id);
   }
 }
