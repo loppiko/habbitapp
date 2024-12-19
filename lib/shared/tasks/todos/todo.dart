@@ -38,6 +38,7 @@ class Todo {
   String get text => _text;
   String get notes => _notes;
   bool get completed => _completed;
+  int get priority => _priority;
   Color get taskColor => _taskColor;
   Color get circleColor => _circleColor;
   DateTime? get creationDate => _creationDate;
