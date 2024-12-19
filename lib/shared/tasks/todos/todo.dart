@@ -6,6 +6,7 @@ class Todo {
   String _text;
   String _notes;
   bool _completed;
+  int _priority;
   DateTime? _creationDate;
   DateTime? _date;
   Color _taskColor = HabiticaColors.red10;
@@ -16,11 +17,13 @@ class Todo {
         String text = "",
         String notes = "",
         bool completed = false,
+        int priority = 1,
         DateTime? creationDate,
         DateTime? date,
       })  : _text = text,
         _notes = notes,
         _completed = completed,
+        _priority = priority,
         _creationDate = creationDate ?? DateTime.now(),
         _date = date {
     if (creationDate != null && date != null) {
@@ -68,6 +71,7 @@ class Todo {
         text: input['text'],
         notes: input['notes'],
         completed: input['completed'],
+        priority: input['priority'],
         creationDate: input.containsKey('createdAt') ? DateTime.parse(input['createdAt']) : null,
         date: input.containsKey('date') ? DateTime.parse(input['date']) : null
     );

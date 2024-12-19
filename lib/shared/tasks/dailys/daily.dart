@@ -4,7 +4,7 @@ import 'package:habbitapp/shared/consts/habitica_colors.dart';
 class Daily {
   final String _id;
   String _text, _frequency;
-  int _everyX, _streak;
+  int _everyX, _streak, _priority;
   DateTime _startDate;
   bool _isDue;
   Map<String, bool> _repeat;
@@ -20,6 +20,7 @@ class Daily {
         int everyX = 1,
         DateTime? startDate,
         int streak = 0,
+        int priority = 1,
         bool isDue = false,
         Map<String, bool>? repeat,
         List<DateTime>? nextDue,
@@ -27,6 +28,7 @@ class Daily {
         _frequency = frequency,
         _everyX = everyX,
         _startDate = startDate ?? DateTime.now(),
+        _priority = priority,
         _streak = streak,
         _isDue = isDue,
         _repeat = repeat ?? <String, bool>{},
@@ -43,6 +45,7 @@ class Daily {
   String get frequency => _frequency;
   int get everyX => _everyX;
   int get streak => _streak;
+  int get priority => _priority;
   DateTime get startDate => _startDate;
   bool get isDue => _isDue;
   Map<String, bool> get repeat => Map.unmodifiable(_repeat);
@@ -75,6 +78,7 @@ class Daily {
       frequency: input['frequency'],
       everyX: input['everyX'],
       startDate: DateTime.parse(input['startDate']),
+      priority: input['priority'],
       streak: input['streak'],
       isDue: input['isDue'],
       repeat: (input['repeat'] as Map<String, dynamic>?)?.map((key, value) => MapEntry(key, value as bool)),
