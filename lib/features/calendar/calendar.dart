@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:habbitapp/shared/tasks/todos/todo.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
-import 'package:provider/provider.dart';
-
 
 class CalendarScreen extends StatelessWidget {
   @override
@@ -15,15 +14,25 @@ class CalendarScreen extends StatelessWidget {
       ),
       body: Consumer<TodosRepository>(
         builder: (context, repository, child) {
-          final todos = repository.todos; // Dostęp do danych repozytorium
+          final todos = repository.todos; // Pobranie zadań z repozytorium
 
           return ListView.builder(
             itemCount: todos.length,
             itemBuilder: (context, index) {
               final todo = todos[index];
-              return ListTile(
-                title: Text(todo.text),
-                subtitle: Text(todo.notes),
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: TaskCard(
+                    title: todo.text,
+                    description: todo.notes,
+                    leftColor: todo.taskColor,
+                    circleColor: todo.circleColor,
+                    currentProgress: todo.getDoneNumberOfChecklistSubTasks(),
+                    totalProgress: todo.getTotalNumberOfChecklistSubTasks(),
+                    priority: todo.priority,
+                  ),
+                ),
               );
             },
           );
@@ -31,84 +40,26 @@ class CalendarScreen extends StatelessWidget {
       ),
     );
   }
-
-
-  Map<String, List<Todo>> _groupTodosByDay(List<Todo> todos) {
-    final Map<String, List<Todo>> todosByDay = {};
-
-    for (final todo in todos) {
-      final dueDate = todo.date ?? todo.creationDate;
-      if (dueDate == null) continue;
-
-      final dayKey = "${dueDate.year}-${dueDate.month}-${dueDate.day}";
-
-      if (!todosByDay.containsKey(dayKey)) {
-        todosByDay[dayKey] = [];
-      }
-      todosByDay[dayKey]!.add(todo);
-    }
-
-    return todosByDay;
-  }
 }
-
-
-class DaySection extends StatelessWidget {
-  final String day;
-  final List<Widget> tasks;
-
-  const DaySection({
-    Key? key,
-    required this.day,
-    required this.tasks,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: Text(
-              day,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          // Maksymalna szerokość dla wszystkich elementów
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500), // Maksymalna szerokość
-            child: Column(
-              children: tasks,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
 
 class TaskCard extends StatelessWidget {
   final String title;
   final String description;
   final Color leftColor;
+  final Color circleColor;
   final int currentProgress;
   final int totalProgress;
+  final int priority;
 
   const TaskCard({
     Key? key,
     required this.title,
     required this.description,
     required this.leftColor,
+    required this.circleColor,
     required this.currentProgress,
     required this.totalProgress,
+    required this.priority,
   }) : super(key: key);
 
   @override
@@ -123,7 +74,7 @@ class TaskCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Lewa sekcja z kolorem
+          // Lewa sekcja z kolorem i kółkiem
           Container(
             width: 40,
             height: 100,
@@ -134,7 +85,18 @@ class TaskCard extends StatelessWidget {
                 bottomLeft: Radius.circular(16),
               ),
             ),
+            child: Center(
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: circleColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
           ),
+          // Środkowa sekcja z tytułem i opisem
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -163,11 +125,13 @@ class TaskCard extends StatelessWidget {
               ),
             ),
           ),
-          // Prawa sekcja z numerami
+          // Prawa sekcja z postępem i kropkami
           Container(
             margin: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // Postęp w zadaniu
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -183,7 +147,17 @@ class TaskCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Icon(Icons.more_vert, color: Colors.black54),
+                // Kropki odpowiadające priorytetowi
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    priority,
+                        (index) => const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 2.0),
+                      child: Icon(Icons.circle, size: 8, color: Colors.black54),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -192,4 +166,3 @@ class TaskCard extends StatelessWidget {
     );
   }
 }
-
