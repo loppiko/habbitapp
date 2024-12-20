@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habbitapp/features/login/login.dart';
+import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 import 'package:provider/provider.dart';
 import 'features/home/home.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.transparent,
+        scaffoldBackgroundColor: HabiticaColors.purple100,
       ),
         home: LoginScreen(), // Główny ekran aplikacji
     );
