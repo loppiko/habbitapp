@@ -1,44 +1,183 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:habbitapp/shared/tasks/todos/todo.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
+import 'package:habbitapp/shared/consts/habitica_colors.dart';
 
 class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Consumer<TodosRepository>(
-        builder: (context, repository, child) {
-          final todos = repository.todos; // Pobranie zadań z repozytorium
-
-          return ListView.builder(
-            itemCount: todos.length,
-            itemBuilder: (context, index) {
-              final todo = todos[index];
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  child: TaskCard(
-                    title: todo.text,
-                    description: todo.notes,
-                    leftColor: todo.taskColor,
-                    circleColor: todo.circleColor,
-                    currentProgress: todo.getDoneNumberOfChecklistSubTasks(),
-                    totalProgress: todo.getTotalNumberOfChecklistSubTasks(),
-                    priority: todo.priority,
-                  ),
-                ),
-              );
+      body: Column(
+        children: [
+          UpperPanel(
+            title: "Calendar",
+            onIconPressed: () {
+              print("Calendar icon pressed");
             },
-          );
-        },
+          ),
+          Expanded(
+            child: TodoList(),
+          ),
+        ],
       ),
     );
+  }
+}
+
+class TodoList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<TodosRepository>(
+      builder: (context, repository, child) {
+        final todos = repository.todos;
+
+        // Sortowanie zadań
+        final sortedTodos = [...todos];
+        sortedTodos.sort((a, b) {
+          if (a.date == null && b.date == null) return 0;
+          if (a.date == null) return -1; // Zadania bez daty na początku
+          if (b.date == null) return 1;
+          return a.date!.compareTo(b.date!); // Sortowanie po dacie
+        });
+
+        String? previousDateLabel; // Przechowuje poprzedni label daty
+
+        return ListView.builder(
+          itemCount: sortedTodos.length,
+          itemBuilder: (context, index) {
+            final todo = sortedTodos[index];
+            final currentDateLabel = todo.getNameOfDate();
+
+            // Sprawdzenie, czy label daty powinien być wyświetlony
+            final showDateLabel = currentDateLabel.isNotEmpty &&
+                currentDateLabel != previousDateLabel;
+
+            // Aktualizacja poprzedniego labela
+            if (showDateLabel) {
+              previousDateLabel = currentDateLabel;
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (showDateLabel)
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 500),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              child: Divider(
+                                color: HabiticaColors.purple50,
+                                thickness: 1.0,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                currentDateLabel,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: HabiticaColors.gray700,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const Expanded(
+                              child: Divider(
+                                color: HabiticaColors.purple50,
+                                thickness: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: TaskCard(
+                      title: todo.text,
+                      description: todo.notes,
+                      leftColor: todo.taskColor,
+                      circleColor: todo.circleColor,
+                      currentProgress: todo.getDoneNumberOfChecklistSubTasks(),
+                      totalProgress: todo.getTotalNumberOfChecklistSubTasks(),
+                      priority: todo.priority,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class UpperPanel extends StatelessWidget {
+  final String title;
+  final VoidCallback onIconPressed;
+
+  const UpperPanel({
+    Key? key,
+    required this.title,
+    required this.onIconPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          color: Colors.transparent,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: HabiticaColors.gray700,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: onIconPressed,
+                    icon: const Icon(
+                      Icons.filter_list,
+                      color: HabiticaColors.gray700,
+                      size: 28,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: onIconPressed,
+                    icon: const Icon(
+                      Icons.calendar_month_outlined,
+                      color: HabiticaColors.gray700,
+                      size: 28,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ));
   }
 }
 
@@ -65,7 +204,7 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color(0xFFE9D5FF), // Jasnofioletowe tło karty
+      color: const Color(0xFFE9D5FF),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -74,7 +213,6 @@ class TaskCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Lewa sekcja z kolorem i kółkiem
           Container(
             width: 40,
             height: 100,
@@ -96,7 +234,6 @@ class TaskCard extends StatelessWidget {
               ),
             ),
           ),
-          // Środkowa sekcja z tytułem i opisem
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -125,13 +262,11 @@ class TaskCard extends StatelessWidget {
               ),
             ),
           ),
-          // Prawa sekcja z postępem i kropkami
           Container(
             margin: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Postęp w zadaniu
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -147,7 +282,6 @@ class TaskCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // Kropki odpowiadające priorytetowi
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(

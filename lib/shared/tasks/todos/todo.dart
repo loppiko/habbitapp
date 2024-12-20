@@ -72,7 +72,7 @@ class Todo {
         text: input['text'],
         notes: input['notes'],
         completed: input['completed'],
-        priority: input['priority'],
+        priority: (input['priority'] * 2).round(),
         creationDate: input.containsKey('createdAt') ? DateTime.parse(input['createdAt']) : null,
         date: input.containsKey('date') ? DateTime.parse(input['date']) : null
     );
@@ -100,4 +100,60 @@ class Todo {
   bool subTaskInChecklist(String id) {
     return _checklist.containsKey(id);
   }
+
+
+  String getNameOfDate() {
+    if (_date == null) {
+      return "Not scheduled";
+    } else {
+      final now = DateTime.now();
+      final difference = _date!.difference(now);
+      final days = difference.inDays;
+
+      if (days < -180) {
+        return "Long ago";
+      } else if (days < -90) {
+        return "3+ months ago";
+      } else if (days < -30) {
+        return "Last month";
+      } else if (days < -21) {
+        return "3 weeks ago";
+      } else if (days < -14) {
+        return "2 weeks ago";
+      } else if (days < -7) {
+        return "Last week";
+      } else if (days < -3) {
+        return "Few days ago";
+      } else if (days == -3) {
+        return "3 days ago";
+      } else if (days == -2) {
+        return "2 days ago";
+      } else if (days == -1) {
+        return "Yesterday";
+      } else if (days == 0) {
+        return "Today";
+      } else if (days == 1) {
+        return "Tomorrow";
+      } else if (days == 2) {
+        return "Next 2 days";
+      } else if (days == 3) {
+        return "Next 3 days";
+      } else if (days <= 7) {
+        return "Few days ahead";
+      } else if (days <= 14) {
+        return "Next 2 weeks";
+      } else if (days <= 21) {
+        return "Next 3 weeks";
+      } else if (days <= 30) {
+        return "Next month";
+      } else if (days <= 90) {
+        return "Next 3 months";
+      } else if (days <= 180) {
+        return "Next 6 months";
+      } else {
+        return "Far future";
+      }
+    }
+  }
+
 }
