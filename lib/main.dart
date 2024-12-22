@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:habbitapp/features/login/login.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
+import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart';
 import 'package:provider/provider.dart';
 import 'features/home/home.dart';
 import 'features/calendar/calendar.dart';
@@ -10,14 +11,15 @@ import 'features/profile/profile.dart';
 
 void main() {
   runApp(
-    // Wrapping the app with ChangeNotifierProvider
-    ChangeNotifierProvider(
-      create: (_) => TodosRepository(),  // Tworzymy instancję TodosRepository
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TodosRepository()), // Pierwszy provider
+        ChangeNotifierProvider(create: (_) => DailyRepository()), // Drugi provider
+      ],
       child: MyApp(),
     ),
   );
 }
-
 
 class MyApp extends StatelessWidget {
   @override
@@ -45,10 +47,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    // Pobieranie danych przy inicjalizacji ekranu
+
     Future.delayed(Duration.zero, () {
       Provider.of<TodosRepository>(context, listen: false)
-          .downloadHabiticaTodos(); // Wywołujemy pobieranie danych
+          .downloadHabiticaTodos();
+    });
+
+    Future.delayed(Duration.zero, () {
+      Provider.of<DailyRepository>(context, listen: false)
+          .downloadHabiticaDailys();
     });
   }
 

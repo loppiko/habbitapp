@@ -72,7 +72,7 @@ class Daily {
       frequency: input['frequency'],
       everyX: input['everyX'],
       startDate: DateTime.parse(input['startDate']),
-      priority: input['priority'],
+      priority: (input['priority'] * 2).round(),
       streak: input['streak'],
       isDue: input['isDue'],
       repeat: (input['repeat'] as Map<String, dynamic>?)?.map((key, value) => MapEntry(key, value as bool)),

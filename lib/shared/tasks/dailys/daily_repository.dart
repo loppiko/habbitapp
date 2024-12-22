@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
+
 import 'daily.dart';
 import 'package:habbitapp/shared/api/api_service.dart';
 
-class DailyRepository {
-  final List<Daily> _dailys = [];
+class DailyRepository extends ChangeNotifier {
+  List<Daily> _dailys = [];
 
 
   void append(Daily daily) {
@@ -15,9 +17,10 @@ class DailyRepository {
   }
 
 
-  void downloadHabiticaDailys() async {
+  Future<void> downloadHabiticaDailys() async {
     try {
       Map<String, dynamic> response = await ApiService.getTasks(type: "dailys");
+      _dailys = [];
 
       if (response.containsKey("data")) {
         for (Map<String, dynamic> jsonDaily in response["data"]) {

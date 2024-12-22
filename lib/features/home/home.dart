@@ -1,179 +1,46 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:habbitapp/shared/consts/habitica_colors.dart';
+import 'package:provider/provider.dart';
+import 'package:habbitapp/shared/tasks/dailys/daily.dart'; // Repozytorium Daily
+import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart'; // Model Daily
 
+
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Daily Tasks',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+// Główna strona aplikacji
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Przykładowe zadania
-    final List<String> tasks = [
-      'My task is to do something',
-      'My task is to do anything',
-      'Not to play on computer',
-      'Not to use mobile phone',
-      'Not to use mobile phone',
-      'Not to use mobile phone',
-      'Not to use mobile phone',
-    ];
-
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 50),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Row z wykresami kołowymi
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ChartWithLabel(label: 'Longest streak', value: 80),
-                      ChartWithLabel(label: 'Hardest streak', value: 60),
-                      ChartWithLabel(label: 'Days without missing a task', value: 90),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Lista zadań:',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(
-                      0xE6FFFFFF)),
-                ),
-                const SizedBox(height: 16),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 450),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(), // Zapobiega konfliktom z SingleChildScrollView
-                    itemCount: tasks.length,
-                    itemBuilder: (context, index) {
-                      return TaskItem(
-                        title: tasks[index],
-                        onLeftTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Left side tapped on: ${tasks[index]}')),
-                          );
-                        },
-                        onRightTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Right side tapped on: ${tasks[index]}')),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-
-              ],
-            ),
-          ),
-        )
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('Daily Tasks'),
       ),
-    );
-  }
-}
-
-class TaskItem extends StatelessWidget {
-  final String title;
-  final VoidCallback onLeftTap;
-  final VoidCallback onRightTap;
-
-  const TaskItem({
-    Key? key,
-    required this.title,
-    required this.onLeftTap,
-    required this.onRightTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: const Color(0xFFE9D5FF), // Fioletowe tło karty
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20), // Zaokrąglenie krawędzi
-        side: const BorderSide(color: Color(0xFF8A4DB3), width: 4), // Fioletowa obwódka
-      ),
-      child: Row(
-        children: [
-          // Lewa część - koło i prostokąt w Stack
-          GestureDetector(
-            onTap: onLeftTap,
-            child: Container(
-              width: 60, // Szerokość lewej części
-              height: 80,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Prostokąt pod kołem
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
-                      width: 60,
-                      height: 80, // Wysokość prostokąta
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF6FCB4), // Żółty kolor
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          topLeft: Radius.circular(20),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Koło na górze
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFE1E740), // Żółte tło koła
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Prawa część
+      body: Column(
+        children: const [
           Expanded(
-            child: GestureDetector(
-              onTap: onRightTap,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                child: Row(
-                  children: [
-                    // Tytuł zadania
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    // Numer i ikona
-                    Row(
-                      children: const [
-                        CircleAvatar(
-                          radius: 12,
-                          backgroundColor: Color(0xFFFFF89D),
-                          child: Text(
-                            '5',
-                            style: TextStyle(fontSize: 12, color: Colors.black),
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Icon(Icons.double_arrow, color: Colors.black, size: 18),
-                      ],
-                    ),
-                  ],
-                ),
+            child: Center(
+              child: SizedBox(
+                width: 500, // Maksymalna szerokość listy
+                child: DailyList(), // Lista zadań Daily
               ),
             ),
           ),
@@ -183,53 +50,121 @@ class TaskItem extends StatelessWidget {
   }
 }
 
-
-class TaskListScreen extends StatelessWidget {
-  const TaskListScreen({Key? key}) : super(key: key);
+// Lista zadań pobranych z DailyRepository
+class DailyList extends StatelessWidget {
+  const DailyList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Lista zadań
-    final List<String> tasks = [
-      'My task is to do something',
-      'My task is to do anything',
-      'Not to play on computer',
-      'Not to use mobile phone',
-      'Not to use mobile phone',
-      'Not to use mobile phone',
-      'Not to use mobile phone',
-      'Not to use mobile phone',
-    ];
+    // Pobranie instancji repozytorium przez Provider
+    final dailyRepository = Provider.of<DailyRepository>(context);
+    final dailys = dailyRepository.getAll();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Task List'),
-      ),
-      body: ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index) {
-          return TaskItem(
-            title: tasks[index],
-            onLeftTap: () {
-              // Kliknięcie lewej części
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Left side tapped on: ${tasks[index]}')),
-              );
-            },
-            onRightTap: () {
-              // Kliknięcie prawej części
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Right side tapped on: ${tasks[index]}')),
-              );
-            },
-          );
-        },
-      ),
+    if (dailys.isEmpty) {
+      return const Center(child: Text('No tasks available')); // Komunikat dla pustej listy
+    }
+
+    // Budowa listy zadań
+    return ListView.builder(
+      itemCount: dailys.length,
+      itemBuilder: (context, index) {
+        final daily = dailys[index];
+        return TaskItem(daily: daily); // Każdy element listy to TaskItem
+      },
     );
   }
 }
 
+// Pojedynczy element listy zadań Daily
+class TaskItem extends StatelessWidget {
+  final Daily daily;
 
+  const TaskItem({Key? key, required this.daily}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: const Color(0xFFE9D5FF), // Kolor tła karty
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          // Lewa część - koło i prostokąt w Stack
+          Container(
+            width: 60,
+            height: 80,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Prostokąt
+                Positioned(
+                  bottom: 0,
+                  child: Container(
+                    width: 60,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: daily.taskColor, // Kolor prostokąta
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        topLeft: Radius.circular(20),
+                      ),
+                    ),
+                  ),
+                ),
+                // Koło
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: daily.circleColor, // Kolor koła
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Prawa część
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      daily.text,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 12,
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          '${daily.streak}',
+                          style: const TextStyle(fontSize: 12, color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.double_arrow, color: Colors.black, size: 18),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 
 class ChartWithLabel extends StatelessWidget {
@@ -259,7 +194,7 @@ class ChartWithLabel extends StatelessWidget {
                   PieChartData(
                     sections: [
                       PieChartSectionData(
-                        color: Color(0xFFFCBA04),
+                        color: HabiticaColors.teal10,
                         value: value,
                         radius: 15,
                         showTitle: false,
