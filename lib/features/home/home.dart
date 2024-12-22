@@ -5,7 +5,7 @@ import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:habbitapp/shared/tasks/dailys/daily.dart'; // Repozytorium Daily
 import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart'; // Model Daily
-
+import 'package:habbitapp/features/components/upper_pannel/upper_panel.dart';
 
 
 class MyApp extends StatelessWidget {
@@ -80,61 +80,6 @@ class DailyList extends StatelessWidget {
   }
 }
 
-
-class UpperPanel extends StatelessWidget {
-  final String title;
-  final VoidCallback onIconPressed;
-
-  const UpperPanel({
-    Key? key,
-    required this.title,
-    required this.onIconPressed,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          color: Colors.transparent,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: HabiticaColors.gray700,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: onIconPressed,
-                    icon: const Icon(
-                      Icons.filter_list,
-                      color: HabiticaColors.gray700,
-                      size: 28,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: onIconPressed,
-                    icon: const Icon(
-                      Icons.calendar_month_outlined,
-                      color: HabiticaColors.gray700,
-                      size: 28,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ));
-  }
-}
 
 
 // Pojedynczy element listy zadań Daily
