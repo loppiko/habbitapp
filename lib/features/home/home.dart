@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
+import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:habbitapp/shared/tasks/dailys/daily.dart'; // Repozytorium Daily
 import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart'; // Model Daily
@@ -13,7 +14,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Daily Tasks',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -32,10 +32,15 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Daily Tasks'),
       ),
       body: Column(
-        children: const [
+        children: [
+          UpperPanel(
+            title: Provider.of<UserProvider>(context).username ?? '?',
+            onIconPressed: () {
+              print("Calendar icon pressed");
+            },
+          ),
           Expanded(
             child: Center(
               child: SizedBox(
@@ -75,6 +80,63 @@ class DailyList extends StatelessWidget {
   }
 }
 
+
+class UpperPanel extends StatelessWidget {
+  final String title;
+  final VoidCallback onIconPressed;
+
+  const UpperPanel({
+    Key? key,
+    required this.title,
+    required this.onIconPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          color: Colors.transparent,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: HabiticaColors.gray700,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: onIconPressed,
+                    icon: const Icon(
+                      Icons.filter_list,
+                      color: HabiticaColors.gray700,
+                      size: 28,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: onIconPressed,
+                    icon: const Icon(
+                      Icons.calendar_month_outlined,
+                      color: HabiticaColors.gray700,
+                      size: 28,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ));
+  }
+}
+
+
 // Pojedynczy element listy zadań Daily
 class TaskItem extends StatelessWidget {
   final Daily daily;
@@ -86,7 +148,7 @@ class TaskItem extends StatelessWidget {
     return Card(
       color: const Color(0xFFE9D5FF), // Kolor tła karty
       elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -146,7 +208,7 @@ class TaskItem extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 12,
-                        backgroundColor: Colors.white,
+                        backgroundColor: daily.circleColor,
                         child: Text(
                           '${daily.streak}',
                           style: const TextStyle(fontSize: 12, color: Colors.black),

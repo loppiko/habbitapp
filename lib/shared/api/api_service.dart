@@ -1,12 +1,15 @@
-import 'dart:convert'; // Do parsowania JSON
+import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:habbitapp/shared/api/auth_service.dart';
-import 'package:http/http.dart' as http; // Biblioteka HTTP
+import 'package:habbitapp/shared/user_data/UserProvider.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class ApiService {
   static const String baseUrl = "https://habitica.com/api/v3";
   static final AuthService _authService = AuthService();
 
-  static Future<Map<String, dynamic>> login(String username, String password) async {
+  static Future<Map<String, dynamic>> login(BuildContext context, String username, String password) async {
     final url = Uri.parse('$baseUrl/user/auth/local/login');
 
     try {
@@ -28,6 +31,9 @@ class ApiService {
         if (responseData.containsKey('data') && responseData['data'].containsKey('apiToken') && responseData['data'].containsKey('id')) {
           final String token = responseData['data']['apiToken'];
           final String userId = responseData['data']['id'];
+          final String username = responseData['data']['username'];
+
+          Provider.of<UserProvider>(context, listen: false).setUsername(username);
 
           _authService.setToken(token); // Zapisz token do AuthService
           _authService.setUserId(userId);

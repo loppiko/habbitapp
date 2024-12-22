@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
     String username = usernameController.text;
     String password = passwordController.text;
 
-    final response = await ApiService.login(username, password);
+    final response = await ApiService.login(context, username, password);
 
     if (response.containsKey('token')) {
       final repository = TodosRepository();

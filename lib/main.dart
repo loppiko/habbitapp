@@ -3,6 +3,7 @@ import 'package:habbitapp/features/login/login.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart';
+import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
 import 'features/home/home.dart';
 import 'features/calendar/calendar.dart';
@@ -13,6 +14,7 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => TodosRepository()), // Pierwszy provider
         ChangeNotifierProvider(create: (_) => DailyRepository()), // Drugi provider
       ],
@@ -83,7 +85,7 @@ class _HomePageState extends State<HomePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Calendar'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.exposure), label: 'Habits'),
         ],
       ),
     );

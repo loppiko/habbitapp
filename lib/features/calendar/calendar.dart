@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
@@ -14,7 +15,7 @@ class CalendarScreen extends StatelessWidget {
       body: Column(
         children: [
           UpperPanel(
-            title: "Calendar",
+            title: Provider.of<UserProvider>(context).username ?? '?',
             onIconPressed: () {
               print("Calendar icon pressed");
             },
