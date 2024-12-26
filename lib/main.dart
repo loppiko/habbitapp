@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habbitapp/features/home/daily_view.dart';
 import 'package:habbitapp/features/login/login.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/shared/tasks/habits/habit_repository.dart';
@@ -6,7 +7,6 @@ import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart';
 import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
-import 'features/home/home.dart';
 import 'features/todo_view/todo_view.dart';
 import 'features/habit_view/habit_view.dart';
 
@@ -97,8 +97,8 @@ class _HomePageState extends State<HomePage> {
                         size: const Size(60, 45),
                         painter: TrianglePainter(
                           color: _isHighlighted
-                              ? HabiticaColors.purple300
-                              : HabiticaColors.purple200,
+                              ? HabiticaColors.purple400
+                              : HabiticaColors.purple300,
                         ),
                       ),
                       Padding( // Dodajemy Padding
