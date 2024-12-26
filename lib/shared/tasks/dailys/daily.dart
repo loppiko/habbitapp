@@ -107,4 +107,48 @@ class Daily {
   bool subTaskInChecklist(String id) {
     return _checklist.containsKey(id);
   }
+
+
+  int nextDueInDays() {
+    if (_nextDue.isEmpty) return -1;
+
+    final now = DateTime.now();
+    final nextDue = _nextDue.firstWhere(
+            (date) => !date.isBefore(now)
+    );
+    final days = nextDue.difference(now).inDays;
+
+    return days;
+  }
+
+
+  String nextDueInText() {
+    if (_nextDue.isEmpty) return "No due dates available";
+
+    final days = nextDueInDays();
+
+    if (days == 0) {
+    return "Today";
+    } else if (days == 1) {
+    return "Tomorrow";
+    } else if (days == 2) {
+    return "Next 2 days";
+    } else if (days == 3) {
+    return "Next 3 days";
+    } else if (days <= 7) {
+    return "Few days ahead";
+    } else if (days <= 14) {
+    return "Next 2 weeks";
+    } else if (days <= 21) {
+    return "Next 3 weeks";
+    } else if (days <= 30) {
+    return "Next month";
+    } else if (days <= 90) {
+    return "Next 3 months";
+    } else if (days <= 180) {
+    return "Next 6 months";
+    } else {
+    return "Far future";
+    }
+  }
 }

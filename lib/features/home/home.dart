@@ -62,25 +62,83 @@ class DailyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Pobranie instancji repozytorium przez Provider
     final dailyRepository = Provider.of<DailyRepository>(context);
     final dailys = dailyRepository.getAll();
 
     if (dailys.isEmpty) {
-      return const Center(child: Text('No tasks available')); // Komunikat dla pustej listy
+      return const Center(child: Text('No tasks available'));
     }
 
-    // Budowa listy zadań
+    // Sortowanie zadań według daty
+    final sortedDailys = [...dailys];
+    sortedDailys.sort((a, b) {
+      if (a.nextDueInDays() == -1 && b.nextDueInDays() == -1) return 0;
+      if (a.nextDueInDays() == -1) return -1;
+      if (b.nextDueInDays() == -1) return 1;
+      return a.nextDueInDays().compareTo(b.nextDueInDays());
+    });
+
+    // Zmienna przechowująca poprzednią etykietę daty
+    String? previousDateLabel;
+
     return ListView.builder(
-      itemCount: dailys.length,
+      itemCount: sortedDailys.length,
       itemBuilder: (context, index) {
-        final daily = dailys[index];
-        return TaskItem(daily: daily); // Każdy element listy to TaskItem
+        final daily = sortedDailys[index];
+        final currentDateLabel = daily.nextDueInText(); // Pobranie etykiety daty
+
+        // Sprawdzenie, czy wyświetlić etykietę
+        final showDateLabel =
+            currentDateLabel.isNotEmpty && currentDateLabel != previousDateLabel;
+
+        // Aktualizacja poprzedniego labela
+        if (showDateLabel) {
+          previousDateLabel = currentDateLabel;
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Wyświetlanie opisu daty, jeśli różni się od poprzedniego
+            if (showDateLabel)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Divider(
+                        color: HabiticaColors.purple50,
+                        thickness: 1.0,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        currentDateLabel,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: HabiticaColors.gray700,
+                        ),
+                      ),
+                    ),
+                    const Expanded(
+                      child: Divider(
+                        color: HabiticaColors.purple50,
+                        thickness: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            // Element zadania
+            TaskItem(daily: daily),
+          ],
+        );
       },
     );
   }
 }
-
 
 
 // Pojedynczy element listy zadań Daily
