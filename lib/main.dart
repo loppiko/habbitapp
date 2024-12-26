@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:habbitapp/features/login/login.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
+import 'package:habbitapp/shared/tasks/habits/habit_repository.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart';
 import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
 import 'features/home/home.dart';
 import 'features/todo_view/todo_view.dart';
-import 'features/profile/profile.dart';
+import 'features/habit_view/habit_view.dart';
 
 
 void main() {
@@ -17,6 +18,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => TodosRepository()),
         ChangeNotifierProvider(create: (_) => DailyRepository()),
+        ChangeNotifierProvider(create: (_) => HabitRepository()),
       ],
       child: MyApp(),
     ),
@@ -59,13 +61,18 @@ class _HomePageState extends State<HomePage> {
       Provider.of<DailyRepository>(context, listen: false)
           .downloadHabiticaDailys();
     });
+
+    Future.delayed(Duration.zero, () {
+      Provider.of<HabitRepository>(context, listen: false)
+          .downloadHabiticaHabits();
+    });
   }
 
   int _selectedIndex = 0;
   final List<Widget> _pages = [
     CalendarScreen(),
     const HomeScreen(),
-    const ProfileScreen(),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {

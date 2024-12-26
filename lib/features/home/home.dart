@@ -93,82 +93,88 @@ class TaskItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: const Color(0xFFE9D5FF), // Kolor tła karty
-      elevation: 16,
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
-        children: [
-          // Lewa część - koło i prostokąt w Stack
-          Container(
-            width: 60,
-            height: 80,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Prostokąt
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    width: 60,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: daily.taskColor, // Kolor prostokąta
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        topLeft: Radius.circular(20),
-                      ),
-                    ),
-                  ),
+      child: IntrinsicHeight( // Dodajemy IntrinsicHeight
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch, // Rozciąganie wiersza na całą wysokość
+          children: [
+            // Lewa część - koło i prostokąt
+            Container(
+              width: 60,
+              decoration: BoxDecoration(
+                color: daily.taskColor, // Kolor prostokąta
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  topLeft: Radius.circular(20),
                 ),
-                // Koło
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: daily.circleColor, // Kolor koła
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Prawa część
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              child: Row(
+              ),
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Expanded(
-                    child: Text(
-                      daily.text,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                  // Koło - wyśrodkowane
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: daily.circleColor, // Kolor koła
+                      shape: BoxShape.circle,
                     ),
-                  ),
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 12,
-                        backgroundColor: daily.circleColor,
-                        child: Text(
-                          '${daily.streak}',
-                          style: const TextStyle(fontSize: 12, color: Colors.black),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.double_arrow, color: Colors.black, size: 18),
-                    ],
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+            // Prawa część - tekst
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      daily.text,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      daily.notes,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Prawa część - ikony
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 12,
+                    backgroundColor: daily.circleColor,
+                    child: Text(
+                      '${daily.streak}',
+                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.double_arrow, color: Colors.black, size: 18),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

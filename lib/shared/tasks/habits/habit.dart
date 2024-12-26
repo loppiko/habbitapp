@@ -10,8 +10,11 @@ class Habit {
   DateTime? _creationDate;
   bool _up, _down;
   Map<String, SubTask> _checklist;
-  Color _taskColor = HabiticaColors.red10;
-  Color _circleColor = HabiticaColors.red100;
+  Color _leftTaskColor = HabiticaColors.red10;
+  Color _leftCircleColor = HabiticaColors.red100;
+  Color _rightTaskColor = HabiticaColors.red10;
+  Color _rightCircleColor = HabiticaColors.red100;
+
 
 
   Habit(this._id, { String text = "", String notes = "", String frequency = "", int counterUp = 0, int counterDown = 0, int priority = 1, bool up = true, bool down = true,
@@ -27,8 +30,10 @@ class Habit {
         _checklist = checklist ?? <String, SubTask> {},
         _creationDate = creationDate ?? DateTime.now() {
       List<Color> colors = calculateColors(_counterUp, _counterDown, _up, _down);
-      _taskColor = colors[0];
-      _circleColor = colors[1];
+      _leftTaskColor = colors[0];
+      _leftCircleColor = colors[1];
+      _rightTaskColor = colors[2];
+      _rightCircleColor = colors[3];
   }
 
 
@@ -43,12 +48,16 @@ class Habit {
   bool get up => _up;
   bool get down => _down;
   Map<String, SubTask> get checklist => _checklist;
-  Color get taskColor => _taskColor;
-  Color get circleColor => _circleColor;
+  Color get leftTaskColor => _leftTaskColor;
+  Color get leftCircleColor => _leftCircleColor;
+  Color get rightTaskColor => _rightTaskColor;
+  Color get rightCircleColor => _rightCircleColor;
+
 
 
   List<Color> calculateColors(int counterUp, int counterDown, bool up, bool down) {
     int progress;
+    List<Color> activeColors = [];
 
     if (up && down) {
       progress = counterUp - counterDown;
@@ -59,17 +68,25 @@ class Habit {
     }
 
     if (progress >= 6) {
-      return [HabiticaColors.blue10, HabiticaColors.blue100];
+      activeColors = [HabiticaColors.blue10, HabiticaColors.blue100];
     } else if (progress >= 3 && progress < 6) {
-      return [HabiticaColors.green10, HabiticaColors.green100];
+      activeColors = [HabiticaColors.green10, HabiticaColors.green100];
     } else if (progress >= 0 && progress < 3) {
-      return [HabiticaColors.yellow10, HabiticaColors.yellow100];
+      activeColors = [HabiticaColors.yellow10, HabiticaColors.yellow100];
     } else if (progress >= -3 && progress < 0) {
-      return [HabiticaColors.orange10, HabiticaColors.orange100];
+      activeColors = [HabiticaColors.orange10, HabiticaColors.orange100];
     } else if (progress >= -6 && progress < -3) {
-      return [HabiticaColors.red10, HabiticaColors.red100];
+      activeColors = [HabiticaColors.red10, HabiticaColors.red100];
     } else {
-      return [HabiticaColors.maroon10, HabiticaColors.maroon100];
+      activeColors = [HabiticaColors.maroon10, HabiticaColors.maroon100];
+    }
+
+    if (up && down) {
+      return [activeColors[0], activeColors[1], activeColors[0], activeColors[1]];
+    } else if (up) {
+      return [activeColors[0], activeColors[1], HabiticaColors.gray300, HabiticaColors.gray400];
+    } else {
+      return [HabiticaColors.gray300, HabiticaColors.gray400, activeColors[0], activeColors[1]];
     }
   }
 

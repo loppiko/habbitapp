@@ -4,7 +4,7 @@ import 'package:habbitapp/shared/tasks/sub_tasks/sub_tasks.dart';
 
 class Daily {
   final String _id;
-  String _text, _frequency;
+  String _text, _notes, _frequency;
   int _everyX, _streak, _priority;
   DateTime _startDate;
   bool _isDue;
@@ -15,9 +15,10 @@ class Daily {
   Color _circleColor = HabiticaColors.red100;
 
 
-  Daily(this._id, {String text = "", String frequency = "", int everyX = 1, DateTime? startDate, int streak = 0, int priority = 1, bool isDue = false, Map<String, bool>? repeat, Map<String, SubTask>? checklist, List<DateTime>? nextDue,
+  Daily(this._id, {String text = "", String frequency = "", String notes = "", int everyX = 1, DateTime? startDate, int streak = 0, int priority = 1, bool isDue = false, Map<String, bool>? repeat, Map<String, SubTask>? checklist, List<DateTime>? nextDue,
       })  : _text = text,
         _frequency = frequency,
+        _notes = notes,
         _everyX = everyX,
         _startDate = startDate ?? DateTime.now(),
         _priority = priority,
@@ -36,6 +37,7 @@ class Daily {
   String get id => _id;
   String get text => _text;
   String get frequency => _frequency;
+  String get notes => _notes;
   int get everyX => _everyX;
   int get streak => _streak;
   int get priority => _priority;
@@ -69,6 +71,7 @@ class Daily {
     return Daily(
       input['_id'],
       text: input['text'],
+      notes: input['notes'],
       frequency: input['frequency'],
       everyX: input['everyX'],
       startDate: DateTime.parse(input['startDate']),
