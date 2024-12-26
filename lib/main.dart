@@ -45,33 +45,13 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-
-
-    Future.delayed(Duration.zero, () {
-      Provider.of<TodosRepository>(context, listen: false)
-          .downloadHabiticaTodos();
-    });
-
-    Future.delayed(Duration.zero, () {
-      Provider.of<DailyRepository>(context, listen: false)
-          .downloadHabiticaDailys();
-    });
-
-    Future.delayed(Duration.zero, () {
-      Provider.of<HabitRepository>(context, listen: false)
-          .downloadHabiticaHabits();
-    });
-  }
-
   int _selectedIndex = 0;
+  bool _isHighlighted = false;
+
   final List<Widget> _pages = [
     CalendarScreen(),
-    const HomeScreen(),
+    HomeScreen(),
     ProfileScreen(),
   ];
 
@@ -84,20 +64,107 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: _pages[_selectedIndex], // Wyświetlenie aktualnego ekranu
+      body: Stack(
+        children: [
+          // Wyświetlanie aktualnego ekranu
+          _pages[_selectedIndex],
+
+          // Trójkątny przycisk umieszczony nad paskiem nawigacyjnym
+          Positioned(
+            left: MediaQuery.of(context).size.width / 2 - 30,
+            bottom: 0,
+            child: Material( // Dodajemy Material
+              color: Colors.transparent, // Ważne: tło musi być przezroczyste
+              child: InkWell( // Używamy InkWell dla animacji "ripple"
+                onTap: () {
+                  if (_selectedIndex == 0) {
+                    print("Calendar Button Pressed");
+                  } else if (_selectedIndex == 1) {
+                    print("Home Button Pressed");
+                  } else {
+                    print("Habits Button Pressed");
+                  }
+                },
+                onHighlightChanged: (isHighlighted) {
+                  setState(() {
+                    _isHighlighted = isHighlighted;
+                  });
+                },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CustomPaint(
+                        size: const Size(60, 45),
+                        painter: TrianglePainter(
+                          color: _isHighlighted
+                              ? HabiticaColors.purple300
+                              : HabiticaColors.purple200,
+                        ),
+                      ),
+                      Padding( // Dodajemy Padding
+                        padding: const EdgeInsets.only(top: 9.0),
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            ],
+          ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: HabiticaColors.purple100,
         currentIndex: _selectedIndex,
+        selectedItemColor: HabiticaColors.gray700, // Kolor aktywnego przycisku
+        unselectedItemColor: HabiticaColors.purple400,
         onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Calendar'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.exposure), label: 'Habits'),
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Calendar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home), // Brak ikony na tej pozycji
+            label: 'Home', // Pusty label, bo przycisk jest niestandardowy
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.exposure),
+            label: 'Habits',
+          ),
         ],
       ),
     );
   }
 }
+
+// Klasa do rysowania trójkąta
+class TrianglePainter extends CustomPainter {
+  final Color color;
+
+  TrianglePainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()..color = color; // Używamy przekazanego koloru
+    final Path path = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(size.width, size.height)
+      ..lineTo(size.width / 2, 0)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant TrianglePainter oldDelegate) {
+    return color != oldDelegate.color;
+  }
+}
+
 
 // GradientBackground Widget
 class GradientBackground extends StatelessWidget {
