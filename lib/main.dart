@@ -6,6 +6,9 @@ import 'package:habbitapp/shared/tasks/habits/habit_repository.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart';
 import 'package:habbitapp/shared/user_data/UserProvider.dart';
+import 'features/habit_view/add_habit_view.dart';
+import 'features/todo_view/add_todo_view.dart';
+import 'features/home/add_daily_view.dart';
 import 'package:provider/provider.dart';
 import 'features/todo_view/todo_view.dart';
 import 'features/habit_view/habit_view.dart';
@@ -55,6 +58,16 @@ class _HomePageState extends State<HomePage> {
     ProfileScreen(),
   ];
 
+  void _navigateToAddScreen(BuildContext context) {
+    if (_selectedIndex == 0) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AddTodoScreen()));
+    } else if (_selectedIndex == 1) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AddDailycreen())); // Use DailyView
+    } else if (_selectedIndex == 2) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AddHabitScreen()));
+    }
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -66,70 +79,59 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Wyświetlanie aktualnego ekranu
           _pages[_selectedIndex],
-
-          // Trójkątny przycisk umieszczony nad paskiem nawigacyjnym
           Positioned(
             left: MediaQuery.of(context).size.width / 2 - 30,
             bottom: 0,
-            child: Material( // Dodajemy Material
-              color: Colors.transparent, // Ważne: tło musi być przezroczyste
-              child: InkWell( // Używamy InkWell dla animacji "ripple"
-                onTap: () {
-                  if (_selectedIndex == 0) {
-                    print("Calendar Button Pressed");
-                  } else if (_selectedIndex == 1) {
-                    print("Home Button Pressed");
-                  } else {
-                    print("Habits Button Pressed");
-                  }
-                },
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => _navigateToAddScreen(context),
                 onHighlightChanged: (isHighlighted) {
                   setState(() {
                     _isHighlighted = isHighlighted;
                   });
                 },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      CustomPaint(
-                        size: const Size(60, 45),
-                        painter: TrianglePainter(
-                          color: _isHighlighted
-                              ? HabiticaColors.purple400
-                              : HabiticaColors.purple300,
-                        ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CustomPaint(
+                      size: const Size(60, 45),
+                      painter: TrianglePainter(
+                        color: _isHighlighted
+                            ? HabiticaColors.purple400
+                            : HabiticaColors.purple300,
                       ),
-                      Padding( // Dodajemy Padding
-                        padding: const EdgeInsets.only(top: 9.0),
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 30,
-                        ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 9.0),
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 30,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            ],
           ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: HabiticaColors.purple100,
         currentIndex: _selectedIndex,
-        selectedItemColor: HabiticaColors.gray700, // Kolor aktywnego przycisku
+        selectedItemColor: HabiticaColors.gray700,
         unselectedItemColor: HabiticaColors.purple400,
         onTap: _onItemTapped,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month),
             label: 'Calendar',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home), // Brak ikony na tej pozycji
-            label: 'Home', // Pusty label, bo przycisk jest niestandardowy
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.exposure),
