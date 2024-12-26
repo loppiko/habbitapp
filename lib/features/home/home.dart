@@ -41,6 +41,7 @@ class HomeScreen extends StatelessWidget {
               print("Calendar icon pressed");
             },
           ),
+          const SizedBox(height: 20),
           Expanded(
             child: Center(
               child: SizedBox(
@@ -92,8 +93,8 @@ class TaskItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: const Color(0xFFE9D5FF), // Kolor tła karty
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+      elevation: 16,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),

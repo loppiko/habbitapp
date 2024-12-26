@@ -6,7 +6,7 @@ import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart';
 import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
 import 'features/home/home.dart';
-import 'features/calendar/calendar.dart';
+import 'features/todo_view/todo_view.dart';
 import 'features/profile/profile.dart';
 
 
@@ -15,8 +15,8 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => TodosRepository()), // Pierwszy provider
-        ChangeNotifierProvider(create: (_) => DailyRepository()), // Drugi provider
+        ChangeNotifierProvider(create: (_) => TodosRepository()),
+        ChangeNotifierProvider(create: (_) => DailyRepository()),
       ],
       child: MyApp(),
     ),
