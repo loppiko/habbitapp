@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:habbitapp/shared/api/api_exceptions.dart';
 import 'package:habbitapp/shared/api/auth_service.dart';
+import 'package:habbitapp/shared/tasks/dailys/daily.dart';
+import 'package:habbitapp/shared/tasks/habits/habit.dart';
+import 'package:habbitapp/shared/tasks/todos/todo.dart';
 import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -8,6 +12,7 @@ import 'package:provider/provider.dart';
 class ApiService {
   static const String baseUrl = "https://habitica.com/api/v3";
   static final AuthService _authService = AuthService();
+
 
   static Future<Map<String, dynamic>> login(BuildContext context, String username, String password) async {
     final url = Uri.parse('$baseUrl/user/auth/local/login');
@@ -35,7 +40,7 @@ class ApiService {
 
           Provider.of<UserProvider>(context, listen: false).setUsername(username);
 
-          _authService.setToken(token); // Zapisz token do AuthService
+          _authService.setToken(token);
           _authService.setUserId(userId);
           return {
             'success': true,
@@ -62,30 +67,31 @@ class ApiService {
     }
   }
 
+
   static Future<Map<String, dynamic>> get(String endpoint, {Map<String, String>? queryParams}) async {
     final url = Uri.parse('$baseUrl/$endpoint').replace(queryParameters: queryParams);
     final token = await _authService.getToken();
     final userId = await _authService.getUserId();
 
     if (token == null || userId == null) {
-      return {'error': 'User is not authenticated'};
+      return {'error': AuthenticationException("addTask - User not authenticated")};
     }
 
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': token,
-          'x-api-user': userId
-        },
-      );
+      try {
+        final response = await http.get(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': token,
+            'x-api-user': userId
+          },
+        );
 
-      if (response.statusCode == 200) {
+        if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
         return {
-          'error': 'Failed to fetch data',
+          'error': 'Failed to fetch data - download',
           'statusCode': response.statusCode,
         };
       }
@@ -94,6 +100,7 @@ class ApiService {
     }
   }
 
+
   static Future<Map<String, dynamic>> getTasks({String type = ""}) async {
     final endpoint = 'tasks/user';
 
@@ -101,6 +108,45 @@ class ApiService {
       return await get(endpoint, queryParams: {'type': type});
     } else {
       return await get(endpoint);
+    }
+  }
+
+
+  static Future<Map<String, dynamic>> addTask(Map<String, dynamic> taskData) async {
+    final url = Uri.parse('$baseUrl/tasks/user');
+    final token = _authService.getToken();
+    final userId = _authService.getUserId();
+
+    // Sprawdzenie autoryzacji
+    if (token == null || userId == null) {
+      return {'error': AuthenticationException("addTask - User not authenticated")};
+    }
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': token,
+          'x-api-user': userId
+        },
+        body: jsonEncode(taskData),
+      );
+
+      if (response.statusCode == 201) {
+        return jsonDecode(response.body);
+      } else {
+        int statusCode = response.statusCode;
+        print("Error $statusCode");
+        print(response.body);
+        return {
+          'error': 'Failed to fetch data',
+          'statusCode': response.statusCode,
+          'body': response.body
+        };
+      }
+    } catch (e) {
+      return {'error': 'An error occurred: $e'};
     }
   }
 }

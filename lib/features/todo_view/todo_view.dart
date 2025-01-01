@@ -138,7 +138,7 @@ class TaskCard extends StatelessWidget {
   final Color circleColor;
   final int currentProgress;
   final int totalProgress;
-  final int priority;
+  final double priority;
 
   const TaskCard({
     Key? key,
@@ -235,7 +235,7 @@ class TaskCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
-                    priority,
+                    (priority * 2).round(),
                         (index) => const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 2.0),
                       child: Icon(Icons.circle, size: 8, color: Colors.black54),

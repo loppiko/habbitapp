@@ -5,7 +5,8 @@ import 'package:habbitapp/shared/tasks/sub_tasks/sub_tasks.dart';
 class Daily {
   final String _id;
   String _text, _notes, _frequency;
-  int _everyX, _streak, _priority;
+  int _everyX, _streak;
+  double _priority;
   DateTime _startDate;
   bool _isDue;
   Map<String, bool> _repeat;
@@ -15,7 +16,7 @@ class Daily {
   Color _circleColor = HabiticaColors.red100;
 
 
-  Daily(this._id, {String text = "", String frequency = "", String notes = "", int everyX = 1, DateTime? startDate, int streak = 0, int priority = 1, bool isDue = false, Map<String, bool>? repeat, Map<String, SubTask>? checklist, List<DateTime>? nextDue,
+  Daily(this._id, {String text = "", String frequency = "", String notes = "", int everyX = 1, DateTime? startDate, int streak = 0, double priority = 1.0, bool isDue = false, Map<String, bool>? repeat, Map<String, SubTask>? checklist, List<DateTime>? nextDue,
       })  : _text = text,
         _frequency = frequency,
         _notes = notes,
@@ -40,7 +41,7 @@ class Daily {
   String get notes => _notes;
   int get everyX => _everyX;
   int get streak => _streak;
-  int get priority => _priority;
+  double get priority => _priority;
   DateTime get startDate => _startDate;
   bool get isDue => _isDue;
   Map<String, bool> get repeat => Map.unmodifiable(_repeat);
@@ -75,7 +76,7 @@ class Daily {
       frequency: input['frequency'],
       everyX: input['everyX'],
       startDate: DateTime.parse(input['startDate']),
-      priority: (input['priority'] * 2).round(),
+      priority: input['priority'].toDouble(),
       streak: input['streak'],
       isDue: input['isDue'],
       repeat: (input['repeat'] as Map<String, dynamic>?)?.map((key, value) => MapEntry(key, value as bool)),

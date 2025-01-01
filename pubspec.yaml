@@ -63,6 +63,10 @@ flutter:
   assets:
     - assets/images/habitica_logo.png
     - assets/images/avatar.png
+    - assets/images/stars/Trivial.png
+    - assets/images/stars/Easy.png
+    - assets/images/stars/Medium.png
+    - assets/images/stars/Hard.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

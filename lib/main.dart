@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
     if (_selectedIndex == 0) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => AddTodoScreen()));
     } else if (_selectedIndex == 1) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => AddDailycreen())); // Use DailyView
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AddDailyScreen())); // Use DailyView
     } else if (_selectedIndex == 2) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => AddHabitScreen()));
     }

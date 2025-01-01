@@ -6,7 +6,8 @@ import 'package:habbitapp/shared/tasks/sub_tasks/sub_tasks.dart';
 class Habit {
   final String _id;
   String _text, _frequency, _notes;
-  int _counterUp, _counterDown, _priority;
+  int _counterUp, _counterDown;
+  double _priority;
   DateTime? _creationDate;
   bool _up, _down;
   Map<String, SubTask> _checklist;
@@ -17,7 +18,7 @@ class Habit {
 
 
 
-  Habit(this._id, { String text = "", String notes = "", String frequency = "", int counterUp = 0, int counterDown = 0, int priority = 1, bool up = true, bool down = true,
+  Habit(this._id, { String text = "", String notes = "", String frequency = "", int counterUp = 0, int counterDown = 0, double priority = 1.0, bool up = true, bool down = true,
     Map<String, SubTask>? checklist, DateTime? creationDate})
       : _text = text,
         _notes = notes,
@@ -43,7 +44,7 @@ class Habit {
   String get notes => _notes;
   int get counterUp => _counterUp;
   int get counterDown => _counterDown;
-  int get priority => _priority;
+  double get priority => _priority;
   DateTime? get creationDate => _creationDate;
   bool get up => _up;
   bool get down => _down;
@@ -99,7 +100,7 @@ class Habit {
         notes: input['notes'],
         counterUp: input['counterUp'],
         counterDown: input['counterDown'],
-        priority: (input['priority'] * 2).round(),
+        priority: input['priority'].toDouble(),
         up: input['up'],
         down: input['down'],
         creationDate: input.containsKey('createdAt') ? DateTime.parse(input['createdAt']) : null,

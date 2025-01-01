@@ -3,11 +3,11 @@ import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/shared/tasks/sub_tasks/sub_tasks.dart';
 
 class Todo {
-  final String _id;
+  String _id;
   String _text;
   String _notes;
   bool _completed;
-  int _priority;
+  double _priority;
   Map<String, SubTask> _checklist;
   DateTime? _creationDate;
   DateTime? _date;
@@ -15,9 +15,10 @@ class Todo {
   Color _circleColor = HabiticaColors.red100;
 
 
-  Todo(this._id, { String text = "", String notes = "", bool completed = false, int priority = 1,
+  Todo({String id = "", String text = "", String notes = "", bool completed = false, double priority = 1.0,
         Map<String, SubTask>? checklist, DateTime? creationDate, DateTime? date,})
-      : _text = text,
+      : _id = id,
+        _text = text,
         _notes = notes,
         _completed = completed,
         _priority = priority,
@@ -36,12 +37,17 @@ class Todo {
   String get text => _text;
   String get notes => _notes;
   bool get completed => _completed;
-  int get priority => _priority;
+  double get priority => _priority;
   Map<String, SubTask> get checklist => Map.unmodifiable(_checklist);
   Color get taskColor => _taskColor;
   Color get circleColor => _circleColor;
   DateTime? get creationDate => _creationDate;
   DateTime? get date => _date;
+
+
+  set id(String id) {
+    _id = id;
+  }
 
 
   static List<Color> calculateColors(DateTime createdAt, DateTime dueDate) {
@@ -68,11 +74,11 @@ class Todo {
 
   static Todo createFromJsonResponse(Map<String, dynamic> input) {
     return Todo(
-        input['_id'],
+        id: input['_id'],
         text: input['text'],
         notes: input['notes'],
         completed: input['completed'],
-        priority: (input['priority'] * 2).round(),
+        priority: input['priority'].toDouble(),
         creationDate: input.containsKey('createdAt') ? DateTime.parse(input['createdAt']) : null,
         date: input.containsKey('date') ? DateTime.parse(input['date']) : null
     );
@@ -99,6 +105,28 @@ class Todo {
 
   bool subTaskInChecklist(String id) {
     return _checklist.containsKey(id);
+  }
+
+
+  Map<String, dynamic> toJson(bool addId) {
+    final Map<String, dynamic> data = {};
+
+    if (_id.isNotEmpty && addId) data['_id'] = _id;
+    data['type'] = "todo";
+    data['text'] = _text;
+    data['notes'] = _notes;
+    data['completed'] = _completed;
+    data['priority'] = _priority;
+    if (_creationDate != null) data['creationDate'] = _creationDate.toString();
+    if (_date != null) data['date'] = _date.toString();
+
+    if (checklist.isNotEmpty) {
+      final List<Map<String, dynamic>> subTaskList = [];
+      _checklist.forEach((key, val) => subTaskList.add(val.toJson()));
+      data['checklist'] = subTaskList;
+    }
+
+    return data;
   }
 
 

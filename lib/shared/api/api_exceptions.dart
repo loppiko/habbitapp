@@ -9,9 +9,9 @@ class ApiException implements Exception {
 }
 
 class AuthenticationException extends ApiException {
-  AuthenticationException(String message) : super(message);
+  AuthenticationException(super.message);
 }
 
 class NetworkException extends ApiException {
-  NetworkException(String message) : super(message);
+  NetworkException(super.message);
 }
