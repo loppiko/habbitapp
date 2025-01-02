@@ -31,7 +31,7 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
     double priority = 1.0;
     switch (selectedDifficulty) {
       case "Trivial":
-        priority = 0.5;
+        priority = 0.1;
         break;
       case "Easy":
         priority = 1.0;

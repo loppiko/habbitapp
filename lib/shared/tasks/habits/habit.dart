@@ -4,7 +4,7 @@ import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/shared/tasks/sub_tasks/sub_tasks.dart';
 
 class Habit {
-  final String _id;
+  String _id;
   String _text, _frequency, _notes;
   int _counterUp, _counterDown;
   double _priority;
@@ -18,9 +18,10 @@ class Habit {
 
 
 
-  Habit(this._id, { String text = "", String notes = "", String frequency = "", int counterUp = 0, int counterDown = 0, double priority = 1.0, bool up = true, bool down = true,
+  Habit({String id = "", String text = "", String notes = "", String frequency = "", int counterUp = 0, int counterDown = 0, double priority = 1.0, bool up = true, bool down = true,
     Map<String, SubTask>? checklist, DateTime? creationDate})
-      : _text = text,
+      : _id = id,
+        _text = text,
         _notes = notes,
         _frequency = frequency,
         _counterUp = counterUp,
@@ -55,6 +56,10 @@ class Habit {
   Color get rightCircleColor => _rightCircleColor;
 
 
+  set id(String id) {
+    _id = id;
+  }
+
 
   List<Color> calculateColors(int counterUp, int counterDown, bool up, bool down) {
     int progress;
@@ -86,15 +91,17 @@ class Habit {
       return [activeColors[0], activeColors[1], activeColors[0], activeColors[1]];
     } else if (up) {
       return [activeColors[0], activeColors[1], HabiticaColors.gray300, HabiticaColors.gray400];
-    } else {
+    } else if (down) {
       return [HabiticaColors.gray300, HabiticaColors.gray400, activeColors[0], activeColors[1]];
+    } else {
+      return [HabiticaColors.gray300, HabiticaColors.gray400, HabiticaColors.gray300, HabiticaColors.gray400];
     }
   }
 
 
   static Habit createFromJsonResponse(Map<String, dynamic> input) {
     return Habit(
-        input['_id'],
+        id: input['_id'],
         text: input['text'],
         frequency: input['frequency'],
         notes: input['notes'],
@@ -107,5 +114,29 @@ class Habit {
     );
   }
 
+
+  Map<String, dynamic> toJson(bool addId) {
+    final Map<String, dynamic> data = {};
+
+    if (_id.isNotEmpty && addId) data['_id'] = _id;
+    data['type'] = "habit";
+    data['text'] = _text;
+    data['notes'] = _notes;
+    data['frequency'] = _frequency;
+    data['up'] = _up;
+    data['down'] = _down;
+    data['counterUp'] = _counterUp;
+    data['counterDown'] = _counterDown;
+    data['priority'] = _priority;
+    if (_creationDate != null) data['creationDate'] = _creationDate.toString();
+
+    if (checklist.isNotEmpty) {
+      final List<Map<String, dynamic>> subTaskList = [];
+      _checklist.forEach((key, val) => subTaskList.add(val.toJson()));
+      data['checklist'] = subTaskList;
+    }
+
+    return data;
+  }
 
 }

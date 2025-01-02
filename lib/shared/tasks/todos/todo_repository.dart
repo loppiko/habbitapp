@@ -15,8 +15,8 @@ class TodosRepository extends ChangeNotifier {
       if (response.containsKey('error')) {
         throw response['error'];
       } else {
-        if (response.containsKey('id') && response['id'] is String){
-          todo.id = response['id'];
+        if (response.containsKey('data') && response['data'].containsKey('id') && response['data']['id'] is String){
+          todo.id = response['data']['id'];
         } else {
           print("Response does not contain 'id'?");
         }

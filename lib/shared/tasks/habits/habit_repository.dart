@@ -8,9 +8,25 @@ class HabitRepository extends ChangeNotifier {
   List<Habit> get habits => List.unmodifiable(_habits);
 
 
-  void append(Habit todo) {
-    _habits.add(todo);
-    notifyListeners();
+  Future<void> append(Habit habit) async {
+    try {
+      Map<String, dynamic> response = await ApiService.addTask(habit.toJson(false));
+
+      if (response.containsKey('error')) {
+        throw response['error'];
+      } else {
+        if (response.containsKey('data') && response['data'].containsKey('id') && response['data']['id'] is String){
+          habit.id = response['data']['id'];
+        } else {
+          print("Response does not contain 'id'?");
+        }
+        _habits.add(habit);
+        notifyListeners();
+      }
+
+    } catch (e) {
+      print(e);
+    }
   }
 
 
@@ -20,7 +36,7 @@ class HabitRepository extends ChangeNotifier {
 
       if (response.containsKey("data")) {
         for (Map<String, dynamic> jsonHabit in response["data"]) {
-          append(Habit.createFromJsonResponse(jsonHabit));
+          _habits.add(Habit.createFromJsonResponse(jsonHabit));
         }
       } else {
         print("Unexpected response $response");
