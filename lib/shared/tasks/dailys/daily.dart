@@ -3,7 +3,7 @@ import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/shared/tasks/sub_tasks/sub_tasks.dart';
 
 class Daily {
-  final String _id;
+  String _id;
   String _text, _notes, _frequency;
   int _everyX, _streak;
   double _priority;
@@ -16,8 +16,9 @@ class Daily {
   Color _circleColor = HabiticaColors.red100;
 
 
-  Daily(this._id, {String text = "", String frequency = "", String notes = "", int everyX = 1, DateTime? startDate, int streak = 0, double priority = 1.0, bool isDue = false, Map<String, bool>? repeat, Map<String, SubTask>? checklist, List<DateTime>? nextDue,
-      })  : _text = text,
+  Daily({String id = "", String text = "", String frequency = "", String notes = "", int everyX = 1, DateTime? startDate, int streak = 0, double priority = 1.0, bool isDue = false, Map<String, bool>? repeat, Map<String, SubTask>? checklist, List<DateTime>? nextDue,
+      })  : _id = id,
+        _text = text,
         _frequency = frequency,
         _notes = notes,
         _everyX = everyX,
@@ -32,6 +33,11 @@ class Daily {
       List<Color> colors = calculateColors(streak);
       _taskColor = colors[0];
       _circleColor = colors[1];
+  }
+
+
+  set id(String id) {
+    _id = id;
   }
 
 
@@ -70,7 +76,7 @@ class Daily {
 
   static Daily createFromJsonResponse(Map<String, dynamic> input) {
     return Daily(
-      input['_id'],
+      id: input['_id'],
       text: input['text'],
       notes: input['notes'],
       frequency: input['frequency'],
@@ -84,6 +90,36 @@ class Daily {
           ?.map((date) => DateTime.parse(date as String))
           .toList()
     );
+  }
+
+
+  Map<String, dynamic> toJson(bool addId) {
+    final Map<String, dynamic> data = {};
+
+    if (_id.isNotEmpty && addId) data['_id'] = _id;
+    data['type'] = "daily";
+    data['text'] = _text;
+    data['notes'] = _notes;
+    data['frequency'] = _frequency;
+    data['everyX'] = _everyX;
+    data['priority'] = _priority;
+    data['streak'] = _streak;
+    data['isDue'] = _isDue;
+    data['creationDate'] = _startDate.toString();
+
+    if (checklist.isNotEmpty) {
+      final List<Map<String, dynamic>> subTaskList = [];
+      _checklist.forEach((key, val) => subTaskList.add(val.toJson()));
+      data['checklist'] = subTaskList;
+    }
+    if (_repeat.isNotEmpty) {
+      final List<Map<String, dynamic>> repeatList = _repeat.entries
+          .map((entry) => {entry.key: entry.value})
+          .toList();
+      data['repeat'] = repeatList;
+    }
+
+    return data;
   }
 
 

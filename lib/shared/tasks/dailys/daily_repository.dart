@@ -7,8 +7,25 @@ class DailyRepository extends ChangeNotifier {
   List<Daily> _dailys = [];
 
 
-  void append(Daily daily) {
-    _dailys.add(daily);
+  Future<void> append(Daily habit) async {
+    try {
+      Map<String, dynamic> response = await ApiService.addTask(habit.toJson(false));
+
+      if (response.containsKey('error')) {
+        throw response['error'];
+      } else {
+        if (response.containsKey('data') && response['data'].containsKey('id') && response['data']['id'] is String){
+          habit.id = response['data']['id'];
+        } else {
+          print("Response does not contain 'id'?");
+        }
+        _dailys.add(habit);
+        notifyListeners();
+      }
+
+    } catch (e) {
+      print(e);
+    }
   }
 
 
@@ -24,7 +41,7 @@ class DailyRepository extends ChangeNotifier {
 
       if (response.containsKey("data")) {
         for (Map<String, dynamic> jsonDaily in response["data"]) {
-          append(Daily.createFromJsonResponse(jsonDaily));
+          _dailys.add(Daily.createFromJsonResponse(jsonDaily));
         }
       } else {
         print("Unexpected response $response.");
