@@ -30,6 +30,23 @@ class HabitRepository extends ChangeNotifier {
   }
 
 
+  Future<void> remove(String taskId) async {
+    try {
+      Map<String, dynamic> response = await ApiService.deleteTask(taskId);
+
+      if (response.containsKey('error')) {
+        throw response['error'];
+      } else {
+        _habits.removeWhere((daily) => daily.id == taskId);
+        notifyListeners();
+      }
+
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
   Future<void> downloadHabiticaHabits() async {
     try {
       Map<String, dynamic> response = await ApiService.getTasks(type: "habits");

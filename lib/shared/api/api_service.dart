@@ -6,10 +6,10 @@ import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
+
 class ApiService {
   static const String baseUrl = "https://habitica.com/api/v3";
   static final AuthService _authService = AuthService();
-
 
   static Future<Map<String, dynamic>> login(BuildContext context, String username, String password) async {
     final url = Uri.parse('$baseUrl/user/auth/local/login');
@@ -29,7 +29,6 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
 
-        // Sprawdź poprawność struktury odpowiedzi
         if (responseData.containsKey('data') && responseData['data'].containsKey('apiToken') && responseData['data'].containsKey('id')) {
           final String token = responseData['data']['apiToken'];
           final String userId = responseData['data']['id'];
@@ -51,7 +50,6 @@ class ApiService {
           };
         }
       } else {
-        // Obsługa błędów zwracanych przez API
         final Map<String, dynamic> errorResponse = jsonDecode(response.body);
         return {
           'error': errorResponse['message'] ?? 'Failed to login',
@@ -59,7 +57,6 @@ class ApiService {
         };
       }
     } catch (e) {
-      // Obsługa błędów sieciowych lub JSON
       return {'error': 'An error occurred: $e'};
     }
   }
@@ -114,7 +111,6 @@ class ApiService {
     final token = _authService.getToken();
     final userId = _authService.getUserId();
 
-    // Sprawdzenie autoryzacji
     if (token == null || userId == null) {
       return {'error': AuthenticationException("addTask - User not authenticated")};
     }
@@ -133,13 +129,47 @@ class ApiService {
       if (response.statusCode == 201) {
         return jsonDecode(response.body);
       } else {
-        int statusCode = response.statusCode;
-        print("Error $statusCode");
+        print("Error ${response.statusCode}");
         print(response.body);
         return {
           'error': 'Failed to fetch data',
           'statusCode': response.statusCode,
           'body': response.body
+        };
+      }
+    } catch (e) {
+      return {'error': 'An error occurred: $e'};
+    }
+  }
+
+
+  static Future<Map<String, dynamic>> deleteTask(String taskId) async {
+    final url = Uri.parse('$baseUrl/tasks/$taskId');
+    final token = _authService.getToken();
+    final userId = _authService.getUserId();
+
+    if (token == null || userId == null) {
+      return {'error': AuthenticationException("addTask - User not authenticated")};
+    }
+
+    try {
+      final response = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': token,
+          'x-api-user': userId
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        print("Error ${response.statusCode}");
+        print(response.body);
+        return {
+          'error': 'Failed to fetch data',
+          'statusCode': response.statusCode
         };
       }
     } catch (e) {

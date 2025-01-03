@@ -31,6 +31,8 @@ class CalendarScreen extends StatelessWidget {
   }
 }
 
+// TODO: implement swipe-to-delete
+
 class TodoList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
