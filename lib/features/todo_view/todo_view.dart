@@ -3,7 +3,7 @@ import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
-import 'package:habbitapp/features/components/upper_pannel/upper_panel.dart';
+import 'package:habbitapp/features/components/views/upper_panel.dart';
 
 
 class CalendarScreen extends StatelessWidget {

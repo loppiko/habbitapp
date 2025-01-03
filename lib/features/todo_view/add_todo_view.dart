@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:habbitapp/features/habit_view/add_habit_view.dart';
+import 'package:habbitapp/features/components/add_views/difficulty_add_button.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/shared/tasks/todos/todo.dart';
 import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 import 'package:provider/provider.dart';
+import 'package:habbitapp/features/components/add_views/upper_add_panel.dart';
+import 'package:habbitapp/features/components/add_views/middle_add_panel.dart';
+import 'package:habbitapp/features/components/add_views/section_add_title.dart';
 
 
 class AddTodoScreen extends StatefulWidget {
@@ -14,7 +17,7 @@ class AddTodoScreen extends StatefulWidget {
 class _AddTodoScreenState extends State<AddTodoScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
-  String? selectedDifficulty = "Easy"; // Default value
+  String? selectedDifficulty = "Easy";
   DateTime? selectedDate;
 
   void handleTodoSave(BuildContext context) async {
@@ -78,12 +81,10 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            UpperPanel(
-              titleController: titleController,
-              notesController: notesController,
+            UpperAddPanel(
               onSave: () => handleTodoSave(context),
             ),
-            MiddlePanel(
+            MiddleAddPanel(
               titleController: titleController,
               notesController: notesController,
             ),
@@ -106,93 +107,6 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
   }
 }
 
-class UpperPanel extends StatelessWidget {
-  final TextEditingController titleController;
-  final TextEditingController notesController;
-  final VoidCallback onSave;
-
-  UpperPanel({
-    required this.titleController,
-    required this.notesController,
-    required this.onSave,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            icon: Icon(Icons.close, color: Colors.white, size: 28),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            onPressed: onSave,
-            child: const Text(
-              'Save',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class MiddlePanel extends StatelessWidget {
-  final TextEditingController titleController;
-  final TextEditingController notesController;
-
-  MiddlePanel({
-    required this.titleController,
-    required this.notesController,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          TextField(
-            controller: titleController,
-            decoration: InputDecoration(
-              labelText: "Title",
-              filled: true,
-              fillColor: HabiticaColors.purple50,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              labelStyle: TextStyle(color: Colors.white70),
-            ),
-            style: TextStyle(color: Colors.white),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: notesController,
-            maxLines: 3,
-            decoration: InputDecoration(
-              labelText: "Notes",
-              filled: true,
-              fillColor: HabiticaColors.purple50,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              labelStyle: TextStyle(color: Colors.white70),
-            ),
-            style: TextStyle(color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class BottomPanel extends StatelessWidget {
   final String? selectedDifficulty;
@@ -292,50 +206,3 @@ class BottomPanel extends StatelessWidget {
     );
   }
 }
-
-
-
-class DifficultyButton extends StatelessWidget {
-  final String label;
-  final String imagePath;
-  final bool isSelected;
-  final VoidCallback onSelect;
-
-  const DifficultyButton({
-    required this.label,
-    required this.imagePath,
-    required this.isSelected,
-    required this.onSelect,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onSelect,
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: isSelected ? HabiticaColors.purple200 : Colors.transparent,
-          ),
-          child: Column(
-            children: [
-              Image.asset(imagePath, height: 60),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white70,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-

@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
+import 'package:habbitapp/features/components/add_views/upper_add_panel.dart';
+import 'package:habbitapp/features/components/add_views/middle_add_panel.dart';
+
 
 class AddDailyScreen extends StatelessWidget {
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController notesController = TextEditingController();
+
+  void handleSave(BuildContext context) {
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: HabiticaColors.purple100, // Tło aplikacji
+      backgroundColor: HabiticaColors.purple100,
       body: SafeArea(
         child: Column(
           children: [
-            // Górny panel
-            UpperPanel(),
-
-            // Środkowy panel
-            MiddlePanel(),
-
-            // Dolny panel
+            UpperAddPanel(onSave: () => handleSave(context)),
+            MiddleAddPanel(titleController: titleController, notesController: notesController),
             Expanded(child: BottomPanel()),
           ],
         ),
@@ -24,77 +29,6 @@ class AddDailyScreen extends StatelessWidget {
   }
 }
 
-// Upper Panel - Znak wyjścia i przycisk zapisu
-class UpperPanel extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            icon: Icon(Icons.close, color: Colors.white, size: 28),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            onPressed: () {
-              // Logika zapisu
-            },
-            child: const Text(
-              'Save',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Middle Panel - Tytuł i Notatki
-class MiddlePanel extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          TextField(
-            decoration: InputDecoration(
-              labelText: "Title",
-              filled: true,
-              fillColor: HabiticaColors.purple50,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              labelStyle: TextStyle(color: Colors.white70),
-            ),
-            style: TextStyle(color: Colors.white),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            maxLines: 3,
-            decoration: InputDecoration(
-              labelText: "Notes",
-              filled: true,
-              fillColor: HabiticaColors.purple50,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              labelStyle: TextStyle(color: Colors.white70),
-            ),
-            style: TextStyle(color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // Bottom Panel - Repeats every and Difficulty
 class BottomPanel extends StatefulWidget {
@@ -112,8 +46,8 @@ class _BottomPanelState extends State<BottomPanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: HabiticaColors.purple50, // Nowy kolor tła dla bottom panel
-      padding: const EdgeInsets.all(24.0), // Powiększony padding wewnątrz panelu
+      color: HabiticaColors.purple50,
+      padding: const EdgeInsets.all(24.0),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

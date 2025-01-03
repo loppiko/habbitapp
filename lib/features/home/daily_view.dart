@@ -5,7 +5,7 @@ import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:habbitapp/shared/tasks/dailys/daily.dart'; // Repozytorium Daily
 import 'package:habbitapp/shared/tasks/dailys/daily_repository.dart'; // Model Daily
-import 'package:habbitapp/features/components/upper_pannel/upper_panel.dart';
+import 'package:habbitapp/features/components/views/upper_panel.dart';
 
 
 class MyApp extends StatelessWidget {

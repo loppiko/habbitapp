@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:habbitapp/features/components/upper_pannel/upper_panel.dart';
+import 'package:habbitapp/features/components/views/upper_panel.dart';
 import 'package:habbitapp/shared/tasks/habits/habit_repository.dart';
 import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
