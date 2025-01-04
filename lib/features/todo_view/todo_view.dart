@@ -5,7 +5,6 @@ import 'package:habbitapp/shared/tasks/todos/todo_repository.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/features/components/views/upper_panel.dart';
 
-
 class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -31,8 +30,6 @@ class CalendarScreen extends StatelessWidget {
   }
 }
 
-// TODO: implement swipe-to-delete
-
 class TodoList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -40,16 +37,15 @@ class TodoList extends StatelessWidget {
       builder: (context, repository, child) {
         final todos = repository.todos;
 
-        // Sortowanie zadań
         final sortedTodos = [...todos];
         sortedTodos.sort((a, b) {
           if (a.date == null && b.date == null) return 0;
-          if (a.date == null) return -1; // Zadania bez daty na początku
+          if (a.date == null) return -1;
           if (b.date == null) return 1;
-          return a.date!.compareTo(b.date!); // Sortowanie po dacie
+          return a.date!.compareTo(b.date!);
         });
 
-        String? previousDateLabel; // Przechowuje poprzedni label daty
+        String? previousDateLabel;
 
         return ListView.builder(
           itemCount: sortedTodos.length,
@@ -57,11 +53,9 @@ class TodoList extends StatelessWidget {
             final todo = sortedTodos[index];
             final currentDateLabel = todo.getNameOfDate();
 
-            // Sprawdzenie, czy label daty powinien być wyświetlony
             final showDateLabel = currentDateLabel.isNotEmpty &&
                 currentDateLabel != previousDateLabel;
 
-            // Aktualizacja poprzedniego labela
             if (showDateLabel) {
               previousDateLabel = currentDateLabel;
             }
@@ -106,19 +100,34 @@ class TodoList extends StatelessWidget {
                       ),
                     ),
                   ),
-
-
-                Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 500),
-                    child: TaskCard(
-                      title: todo.text,
-                      description: todo.notes,
-                      leftColor: todo.taskColor,
-                      circleColor: todo.circleColor,
-                      currentProgress: todo.getDoneNumberOfChecklistSubTasks(),
-                      totalProgress: todo.getTotalNumberOfChecklistSubTasks(),
-                      priority: todo.priority,
+                Dismissible(
+                  key: Key(todo.id),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    repository.remove(todo.id);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Deleted ${todo.text}")),
+                    );
+                  },
+                  background: Container(
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 20.0),
+                    margin: const EdgeInsets.only(top: 8, bottom: 8, right: 16),
+                    color: Colors.red,
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 500),
+                      child: TaskCard(
+                        title: todo.text,
+                        description: todo.notes,
+                        leftColor: todo.taskColor,
+                        circleColor: todo.circleColor,
+                        currentProgress: todo.getDoneNumberOfChecklistSubTasks(),
+                        totalProgress: todo.getTotalNumberOfChecklistSubTasks(),
+                        priority: todo.priority,
+                      ),
                     ),
                   ),
                 ),
@@ -130,8 +139,6 @@ class TodoList extends StatelessWidget {
     );
   }
 }
-
-
 
 class TaskCard extends StatelessWidget {
   final String title;

@@ -4,7 +4,6 @@ import 'package:habbitapp/shared/tasks/habits/habit_repository.dart';
 import 'package:habbitapp/shared/user_data/UserProvider.dart';
 import 'package:provider/provider.dart';
 
-
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -48,11 +47,29 @@ class HabitList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final habitRepository = Provider.of<HabitRepository>(context, listen: false);
+
     return ListView.builder(
       itemCount: habits.length,
       itemBuilder: (context, index) {
         final habit = habits[index];
-        return TaskCard(habit: habit);
+        return Dismissible(
+          key: Key(habit.id),
+          direction: DismissDirection.endToStart,
+          onDismissed: (direction) {
+            habitRepository.remove(habit.id);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Habit deleted")),
+            );
+          },
+          background: Container(
+            color: Colors.red,
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Icon(Icons.delete, color: Colors.white),
+          ),
+          child: TaskCard(habit: habit),
+        );
       },
     );
   }
@@ -72,11 +89,10 @@ class TaskCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      child: IntrinsicHeight( // Dodano IntrinsicHeight, aby dopasować wysokość
+      child: IntrinsicHeight(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch, // Sprawia, że elementy zajmują całą wysokość
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Left side - plus button
             Container(
               width: 60,
               decoration: BoxDecoration(
@@ -98,7 +114,6 @@ class TaskCard extends StatelessWidget {
                 ),
               ),
             ),
-            // Middle - text and notes
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -126,7 +141,6 @@ class TaskCard extends StatelessWidget {
                 ),
               ),
             ),
-            // Right side - counters and minus button
             Row(
               children: [
                 Text(
@@ -170,4 +184,3 @@ class TaskCard extends StatelessWidget {
     );
   }
 }
-
