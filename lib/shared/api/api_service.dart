@@ -45,9 +45,6 @@ class ApiService {
           Provider.of<UserProvider>(context, listen: false).money = userStats['gp'];
           Provider.of<UserProvider>(context, listen: false).experience = userStats['exp'].toDouble();
 
-          print(userStats['gp']);
-          print(userStats['exp']);
-
           return {
             'success': true,
             'token': token,

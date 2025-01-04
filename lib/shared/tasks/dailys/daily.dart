@@ -133,6 +133,11 @@ class Daily {
   }
 
 
+  void increaseStreak() {
+    _streak++;
+  }
+
+
   SubTask getSubTaskById(String id) {
     if (!_checklist.containsKey(id)) {
       throw ArgumentError('Key "$id" not found in the checklist.');

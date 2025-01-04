@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:habbitapp/shared/consts/habitica_colors.dart';
 import 'package:habbitapp/shared/user_data/UserProvider.dart';
@@ -123,7 +122,7 @@ class DailyList extends StatelessWidget {
                 ),
               ),
             Dismissible(
-              key: Key(daily.id.toString()),
+              key: Key(daily.id),
               direction: DismissDirection.endToStart,
               onDismissed: (direction) {
                 dailyRepository.remove(daily.id);
@@ -153,6 +152,24 @@ class TaskItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dailyRepository = Provider.of<DailyRepository>(context, listen: false);
+
+    Future<void> _scoreDaily() async {
+      final result = await dailyRepository.scoreDaily(context, daily.id);
+      final double moneyDiff = result['moneyDiff']!;
+      final double expDiff = result['expDiff']!;
+
+      String notification = 'Todo scored:';
+      if (moneyDiff != 0) {
+        notification += '+${moneyDiff.toStringAsFixed(2)} Gold';
+      }
+      if (expDiff != 0) {
+        notification += '+${expDiff.toStringAsFixed(0)} XP';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(notification)));
+    }
+
     return Card(
       color: const Color(0xFFE9D5FF),
       elevation: 4,
@@ -164,27 +181,33 @@ class TaskItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              width: 60,
-              decoration: BoxDecoration(
-                color: daily.taskColor,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  topLeft: Radius.circular(20),
-                ),
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: daily.circleColor,
-                      shape: BoxShape.circle,
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: _scoreDaily,
+                child: Container(
+                  width: 60,
+                  decoration: BoxDecoration(
+                    color: daily.taskColor,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      topLeft: Radius.circular(20),
                     ),
                   ),
-                ],
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: daily.circleColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
             Expanded(
