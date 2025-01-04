@@ -34,10 +34,20 @@ class ApiService {
           final String userId = responseData['data']['id'];
           final String username = responseData['data']['username'];
 
-          Provider.of<UserProvider>(context, listen: false).setUsername(username);
+          Provider.of<UserProvider>(context, listen: false).username = username;
 
           _authService.setToken(token);
           _authService.setUserId(userId);
+
+          Map<String, dynamic> userData = await get("user/anonymized");
+          Map<String, dynamic> userStats = userData['data']['user']['stats'];
+
+          Provider.of<UserProvider>(context, listen: false).money = userStats['gp'];
+          Provider.of<UserProvider>(context, listen: false).experience = userStats['exp'].toDouble();
+
+          print(userStats['gp']);
+          print(userStats['exp']);
+
           return {
             'success': true,
             'token': token,
@@ -154,6 +164,47 @@ class ApiService {
 
     try {
       final response = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': token,
+          'x-api-user': userId
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        print("Error ${response.statusCode}");
+        print(response.body);
+        return {
+          'error': 'Failed to fetch data',
+          'statusCode': response.statusCode
+        };
+      }
+    } catch (e) {
+      return {'error': 'An error occurred: $e'};
+    }
+  }
+
+
+  static Future<Map<String, dynamic>> scoreTask(String taskId, {bool isDown = false}) async {
+    Uri url;
+    if (isDown) {
+      url = Uri.parse('$baseUrl/tasks/$taskId/score/down');
+    } else {
+      url = Uri.parse('$baseUrl/tasks/$taskId/score/up');
+    }
+
+    final token = _authService.getToken();
+    final userId = _authService.getUserId();
+
+    if (token == null || userId == null) {
+      return {'error': AuthenticationException("addTask - User not authenticated")};
+    }
+
+    try {
+      final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',

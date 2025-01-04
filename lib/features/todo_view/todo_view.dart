@@ -31,6 +31,26 @@ class CalendarScreen extends StatelessWidget {
 }
 
 class TodoList extends StatelessWidget {
+  Future<void> scoreTodo(BuildContext context, String todoId) async {
+    final repository = Provider.of<TodosRepository>(context, listen: false);
+    final result = await repository.scoreTodo(context, todoId);
+
+    final double moneyDiff = result['moneyDiff']!;
+    final double expDiff = result['expDiff']!;
+
+    String notification = 'Todo scored:';
+    if (moneyDiff != 0) {
+      notification += '+${moneyDiff.toStringAsFixed(2)} Gold';
+    }
+    if (expDiff != 0) {
+      notification += '+${expDiff.toStringAsFixed(0)} XP';
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(notification)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TodosRepository>(
@@ -127,6 +147,7 @@ class TodoList extends StatelessWidget {
                         currentProgress: todo.getDoneNumberOfChecklistSubTasks(),
                         totalProgress: todo.getTotalNumberOfChecklistSubTasks(),
                         priority: todo.priority,
+                        onLeftTap: () => scoreTodo(context, todo.id),
                       ),
                     ),
                   ),
@@ -148,6 +169,7 @@ class TaskCard extends StatelessWidget {
   final int currentProgress;
   final int totalProgress;
   final double priority;
+  final VoidCallback onLeftTap;
 
   const TaskCard({
     Key? key,
@@ -158,6 +180,7 @@ class TaskCard extends StatelessWidget {
     required this.currentProgress,
     required this.totalProgress,
     required this.priority,
+    required this.onLeftTap,
   }) : super(key: key);
 
   @override
@@ -172,23 +195,29 @@ class TaskCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 40,
-            height: 100,
-            decoration: BoxDecoration(
-              color: leftColor,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                bottomLeft: Radius.circular(16),
-              ),
-            ),
-            child: Center(
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: onLeftTap,
               child: Container(
-                width: 20,
-                height: 20,
+                width: 40,
+                height: 100,
                 decoration: BoxDecoration(
-                  color: circleColor,
-                  shape: BoxShape.circle,
+                  color: leftColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    bottomLeft: Radius.circular(16),
+                  ),
+                ),
+                child: Center(
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: circleColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                 ),
               ),
             ),

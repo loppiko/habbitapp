@@ -1,6 +1,8 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:habbitapp/shared/api/api_service.dart';
 import 'package:habbitapp/shared/tasks/todos/todo.dart';
+import 'package:habbitapp/shared/user_data/UserProvider.dart';
+import 'package:provider/provider.dart';
 
 class TodosRepository extends ChangeNotifier {
   final List<Todo> _todos = [];
@@ -43,6 +45,36 @@ class TodosRepository extends ChangeNotifier {
 
     } catch (e) {
       print(e);
+    }
+  }
+
+
+  Future<Map<String, double>> scoreTodo(BuildContext context, String taskId) async {
+    try {
+      Map<String, dynamic> response = await ApiService.scoreTask(taskId, isDown: false);
+
+      if (response.containsKey('error')) {
+        throw response['error'];
+      } else {
+        _todos.removeWhere((daily) => daily.id == taskId);
+
+        double moneyDiff = response['data']['gp'] - Provider.of<UserProvider>(context, listen: false).money;
+        double expDiff = response['data']['exp'] - Provider.of<UserProvider>(context, listen: false).experience!.toDouble();
+
+        notifyListeners();
+
+        return {
+          'moneyDiff': moneyDiff,
+          'expDiff': expDiff,
+        };
+      }
+
+    } catch (e) {
+      print(e);
+      return {
+        'moneyDiff': 0.0,
+        'expDiff': 0.0,
+      };
     }
   }
 
