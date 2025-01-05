@@ -70,7 +70,7 @@ class Habit {
     } else if (up) {
       progress = counterUp - 6;
     } else {
-      progress = counterDown - 6;
+      progress = 6 - counterDown;
     }
 
     if (progress >= 6) {
@@ -117,11 +117,21 @@ class Habit {
 
   void increaseCounterUp() {
     _counterUp++;
+    List<Color> colors = calculateColors(_counterUp, _counterDown, _up, _down);
+    _leftTaskColor = colors[0];
+    _leftCircleColor = colors[1];
+    _rightTaskColor = colors[2];
+    _rightCircleColor = colors[3];
   }
 
 
   void increaseCounterDown() {
     _counterDown++;
+    List<Color> colors = calculateColors(_counterUp, _counterDown, _up, _down);
+    _leftTaskColor = colors[0];
+    _leftCircleColor = colors[1];
+    _rightTaskColor = colors[2];
+    _rightCircleColor = colors[3];
   }
 
 

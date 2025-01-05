@@ -8,7 +8,7 @@ class Daily {
   int _everyX, _streak;
   double _priority;
   DateTime _startDate;
-  bool _isDue;
+  bool _isDue, _completed;
   Map<String, bool> _repeat;
   Map<String, SubTask> _checklist;
   List<DateTime> _nextDue;
@@ -16,7 +16,7 @@ class Daily {
   Color _circleColor = HabiticaColors.red100;
 
 
-  Daily({String id = "", String text = "", String frequency = "", String notes = "", int everyX = 1, DateTime? startDate, int streak = 0, double priority = 1.0, bool isDue = false, Map<String, bool>? repeat, Map<String, SubTask>? checklist, List<DateTime>? nextDue,
+  Daily({String id = "", String text = "", String frequency = "", String notes = "", int everyX = 1, DateTime? startDate, int streak = 0, double priority = 1.0, bool isDue = false, bool completed = false, Map<String, bool>? repeat, Map<String, SubTask>? checklist, List<DateTime>? nextDue,
       })  : _id = id,
         _text = text,
         _frequency = frequency,
@@ -26,6 +26,7 @@ class Daily {
         _priority = priority,
         _streak = streak,
         _isDue = isDue,
+        _completed = completed,
         _repeat = repeat ?? <String, bool>{},
         _checklist = checklist ?? <String, SubTask> {},
         _nextDue = nextDue ?? [] {
@@ -50,6 +51,7 @@ class Daily {
   double get priority => _priority;
   DateTime get startDate => _startDate;
   bool get isDue => _isDue;
+  bool get completed => _completed;
   Map<String, bool> get repeat => Map.unmodifiable(_repeat);
   Map<String, SubTask> get checklist => Map.unmodifiable(_checklist);
   List<DateTime> get nextDue => List.unmodifiable(_nextDue);
@@ -57,8 +59,10 @@ class Daily {
   Color get circleColor => _circleColor;
 
 
-  static List<Color> calculateColors(int streak) {
-    if (streak >= 12) {
+  List<Color> calculateColors(int streak) {
+    if (_completed) {
+      return [HabiticaColors.gray300, HabiticaColors.gray400];
+    } else if (streak >= 12) {
       return [HabiticaColors.blue10, HabiticaColors.blue100];
     } else if (streak >= 9 && streak < 12) {
       return [HabiticaColors.green10, HabiticaColors.green100];
@@ -85,6 +89,7 @@ class Daily {
       priority: input['priority'].toDouble(),
       streak: input['streak'],
       isDue: input['isDue'],
+      completed: input['completed'],
       repeat: (input['repeat'] as Map<String, dynamic>?)?.map((key, value) => MapEntry(key, value as bool)),
       nextDue: (input['nextDue'] as List<dynamic>?)
           ?.map((date) => DateTime.parse(date as String))
@@ -102,6 +107,7 @@ class Daily {
     data['notes'] = _notes;
     data['frequency'] = _frequency;
     data['everyX'] = _everyX;
+    data['completed'] = _completed;
     data['priority'] = _priority;
     data['streak'] = _streak;
     data['isDue'] = _isDue;
@@ -134,7 +140,11 @@ class Daily {
 
 
   void increaseStreak() {
+    _completed = true;
     _streak++;
+    List<Color> colors = calculateColors(streak);
+    _taskColor = colors[0];
+    _circleColor = colors[1];
   }
 
 

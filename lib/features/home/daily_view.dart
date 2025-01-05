@@ -182,9 +182,9 @@ class TaskItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             MouseRegion(
-              cursor: SystemMouseCursors.click,
+              cursor: daily.completed ? SystemMouseCursors.basic : SystemMouseCursors.click,
               child: GestureDetector(
-                onTap: _scoreDaily,
+                onTap: daily.completed ? null : _scoreDaily,
                 child: Container(
                   width: 60,
                   decoration: BoxDecoration(
