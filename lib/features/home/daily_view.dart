@@ -159,7 +159,7 @@ class TaskItem extends StatelessWidget {
       final double moneyDiff = result['moneyDiff']!;
       final double expDiff = result['expDiff']!;
 
-      String notification = 'Todo scored:';
+      String notification = 'Daily scored:';
       if (moneyDiff != 0) {
         notification += '+${moneyDiff.toStringAsFixed(2)} Gold';
       }

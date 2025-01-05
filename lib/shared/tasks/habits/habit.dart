@@ -115,6 +115,16 @@ class Habit {
   }
 
 
+  void increaseCounterUp() {
+    _counterUp++;
+  }
+
+
+  void increaseCounterDown() {
+    _counterDown++;
+  }
+
+
   Map<String, dynamic> toJson(bool addId) {
     final Map<String, dynamic> data = {};
 

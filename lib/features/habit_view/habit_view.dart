@@ -82,6 +82,28 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final habitRepository = Provider.of<HabitRepository>(context, listen: false);
+
+    Future<void> handleScore(bool isDown) async {
+      final result = await habitRepository.scoreHabit(context, habit.id, isDown);
+      final moneyDiff = result['moneyDiff']!;
+      final expDiff = result['expDiff']!;
+
+      String notification = 'Habit scored:';
+      if (moneyDiff != 0.0) {
+        notification += '${moneyDiff.toStringAsFixed(2)} Gold';
+      }
+      if (expDiff != 0.0) {
+        notification += '${expDiff.toStringAsFixed(0)} XP';
+      }
+
+      if (moneyDiff != 0.0 || expDiff != 0.0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(notification)),
+        );
+      }
+    }
+
     return Card(
       color: const Color(0xFFE9D5FF),
       elevation: 4,
@@ -93,24 +115,30 @@ class TaskCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              width: 60,
-              decoration: BoxDecoration(
-                color: habit.leftTaskColor,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  topLeft: Radius.circular(20),
-                ),
-              ),
-              child: Center(
+            GestureDetector(
+              onTap: habit.up ? () => handleScore(false) : null,
+              child: MouseRegion(
+                cursor: habit.up ? SystemMouseCursors.click : SystemMouseCursors.basic,
                 child: Container(
-                  width: 30,
-                  height: 30,
+                  width: 60,
                   decoration: BoxDecoration(
-                    color: habit.leftCircleColor,
-                    shape: BoxShape.circle,
+                    color: habit.leftTaskColor,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      topLeft: Radius.circular(20),
+                    ),
                   ),
-                  child: const Icon(Icons.add, color: Colors.white),
+                  child: Center(
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: habit.leftCircleColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.add, color: Colors.white),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -155,24 +183,30 @@ class TaskCard extends StatelessWidget {
                       fontSize: 12, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(width: 8),
-                Container(
-                  width: 60,
-                  decoration: BoxDecoration(
-                    color: habit.rightTaskColor,
-                    borderRadius: const BorderRadius.only(
-                      bottomRight: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  child: Center(
+                GestureDetector(
+                  onTap: habit.down ? () => handleScore(true) : null,
+                  child: MouseRegion(
+                    cursor: habit.down ? SystemMouseCursors.click : SystemMouseCursors.basic,
                     child: Container(
-                      width: 30,
-                      height: 30,
+                      width: 60,
                       decoration: BoxDecoration(
-                        color: habit.rightCircleColor,
-                        shape: BoxShape.circle,
+                        color: habit.rightTaskColor,
+                        borderRadius: const BorderRadius.only(
+                          bottomRight: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
                       ),
-                      child: const Icon(Icons.remove, color: Colors.white),
+                      child: Center(
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: habit.rightCircleColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.remove, color: Colors.white),
+                        ),
+                      ),
                     ),
                   ),
                 ),

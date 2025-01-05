@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:habbitapp/shared/api/api_service.dart';
 import 'package:habbitapp/shared/tasks/habits/habit.dart';
+import 'package:habbitapp/shared/user_data/UserProvider.dart';
+import 'package:provider/provider.dart';
 
 class HabitRepository extends ChangeNotifier {
   List<Habit> _habits = [];
@@ -44,6 +46,45 @@ class HabitRepository extends ChangeNotifier {
     } catch (e) {
       print(e);
     }
+  }
+
+
+  Future<Map<String, double>> scoreHabit(BuildContext context, String taskId, bool isDown) async {
+    try {
+      Map<String, dynamic> response = await ApiService.scoreTask(taskId, isDown: isDown);
+
+      if (response.containsKey('error')) {
+        throw response['error'];
+      } else {
+        double moneyDiff = response['data']['gp'] - Provider.of<UserProvider>(context, listen: false).money;
+        double expDiff = response['data']['exp'] - Provider.of<UserProvider>(context, listen: false).experience!.toDouble();
+
+        if (isDown) {
+          findById(taskId)!.increaseCounterDown();
+        } else {
+          findById(taskId)!.increaseCounterUp();
+        }
+
+        notifyListeners();
+
+        return {
+          'moneyDiff': moneyDiff,
+          'expDiff': expDiff,
+        };
+      }
+
+    } catch (e) {
+      print(e);
+      return {
+        'moneyDiff': 0.0,
+        'expDiff': 0.0,
+      };
+    }
+  }
+
+
+  Habit? findById(String id) {
+    return _habits.firstWhere((daily) => daily.id == id);
   }
 
 
