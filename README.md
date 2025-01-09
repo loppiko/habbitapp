@@ -5,7 +5,7 @@ The Habit Tracker App is a Flutter-based mobile application designed to help use
 
 > **Note:** To use this app, you need an active Habitica account.
 
-<p align="center"> <img src="screenshots/todo-screen.png" alt="TODO Screen" width="300" style="margin-right: 50px;"> <img src="screenshots/daily-screen.png" alt="Daily Screen" width="300" style="margin-right: 50px;"> <img src="screenshots/habit-screen.png" alt="Habit Screen" width="300"> </p> 
+<p align="center"> <img src="screenshots/todo-screen.png" alt="TODO Screen" width="200" style="margin-right: 50px;"> <img src="screenshots/daily-screen.png" alt="Daily Screen" width="200" style="margin-right: 50px;"> <img src="screenshots/habit-screen.png" alt="Habit Screen" width="200"> </p> 
 
 
 ## Features
