@@ -50,14 +50,6 @@ class UpperPanel extends StatelessWidget {
                   IconButton(
                     onPressed: onIconPressed,
                     icon: const Icon(
-                      Icons.filter_list,
-                      color: HabiticaColors.gray700,
-                      size: 28,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: onIconPressed,
-                    icon: const Icon(
                       Icons.calendar_month_outlined,
                       color: HabiticaColors.gray700,
                       size: 28,
