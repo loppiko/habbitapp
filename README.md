@@ -18,11 +18,11 @@ The Habit Tracker App is a Flutter-based mobile application designed to help use
 1. **Clone the Repository**  
    Clone this project to your local machine:
    ```bash
-   git clone https://github.com/your-username/habit-tracker-app.git
+   git clone https://github.com/loppiko/habbitapp.git
    ```
 2. **Install dependencies**
   ```bash
-  cd habit-tracker-app
+  cd habbitapp
   flutter pub get
   ```
 3. **Run app**
