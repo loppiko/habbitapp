@@ -4,9 +4,10 @@
 The Habit Tracker App is a Flutter-based mobile application designed to help users manage their daily tasks, habits, and to-dos effectively. It is using [Habitica API](https://habitica.com) API to track progress.
 
 > **Note:** To use this app, you need an active Habitica account.
-
-<p align="center"> <img src="screenshots/todo-screen.png" alt="TODO Screen" width="200" style="margin-right: 50px;"> <img src="screenshots/daily-screen.png" alt="Daily Screen" width="200" style="margin-right: 50px;"> <img src="screenshots/habit-screen.png" alt="Habit Screen" width="200"> </p> 
-
+<br>
+<br>
+<p align="center"> <img src="screenshots/readme-screenshot.png" alt="Habit Screen"> </p> 
+<br>
 
 ## Features
 - **Customizable Tasks:** Tailor tasks with options for scheduling, difficulty, and repeat settings.
